@@ -2,7 +2,7 @@
 
 A personal gym-tracking PWA built for real training sessions, not spreadsheet logging. Build a template once, run it as a rotating program, and log sets live mid-workout — with a rest timer, RIR (Reps in Reserve) tracking, and history that survives closing the tab, because there's no server to lose connection to.
 
-**[Live demo →](https://vercel.com/mixa2002s-projects/training-pal)** · Installable as a home-screen app on mobile and desktop
+**[Live demo →]([https://vercel.com/mixa2002s-projects/training-pal](https://training-pal-git-main-mixa2002s-projects.vercel.app/))** · Installable as a home-screen app on mobile and desktop
 
 ## Features
 
