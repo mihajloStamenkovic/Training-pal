@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# Training Pal — Offline-First Workout Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal gym-tracking PWA built for real training sessions, not spreadsheet logging. Build a template once, run it as a rotating program, and log sets live mid-workout — with a rest timer, RIR (Reps in Reserve) tracking, and history that survives closing the tab, because there's no server to lose connection to.
 
-Currently, two official plugins are available:
+**[Live demo →](https://vercel.com/mixa2002s-projects/training-pal)** · Installable as a home-screen app on mobile and desktop
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Template-based programming** — build reusable workout templates mixing strength (weight/reps/RIR targets) and cardio (incline/speed/duration) exercises
+- **Program cycles** — chain templates into a rotation (e.g. Push/Pull/Legs) that automatically advances to the next workout in sequence as you complete sessions
+- **Live workout mode** — a dedicated in-session screen with a rest timer, an RIR selector, and set-by-set logging designed for one-handed use between sets
+- **History & consistency tracking** — a calendar view of completed/skipped/abandoned sessions plus consistency stats, so gaps in training are visible, not just individual lifts
+- **Progressive overload predictions** — suggests next-session targets based on past performance
+- **Fully offline** — all data lives in IndexedDB (via Dexie); the app works with no network connection at all, not just a cached shell
+- **Installable PWA** — a Workbox service worker + web manifest make it installable on iOS/Android/desktop and behave like a native app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+| Layer               | Choice                                                           |
+| ------------------- | ---------------------------------------------------------------- |
+| Framework           | React 19 + TypeScript + Vite                                     |
+| Routing             | React Router v7                                                  |
+| Local storage       | Dexie (IndexedDB wrapper) + `dexie-react-hooks` for live queries |
+| Offline/installable | `vite-plugin-pwa` (Workbox)                                      |
+| Styling             | CSS Modules per component                                        |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── screens/          # Today, LiveWorkout, Templates, ProgramCycle, History, Settings
+├── components/
+│   ├── workout/       # Set rows, RIR selector, rest timer display, exercise progress
+│   ├── templates/      # Template cards, exercise form rows
+│   ├── history/       # Calendar view, consistency stats
+│   └── common/         # Buttons, dialogs, toggles, empty states
+├── db/                 # Dexie schema + TypeScript types (Template, Session, ProgramCycle, Settings)
+├── hooks/              # useRestTimer, useStopwatch, useSettings
+└── utils/              # Progressive-overload predictions, date/session helpers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Data Model
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Everything is typed end-to-end: a `Template` holds `Exercise` definitions (strength or cardio), a `ProgramCycle` sequences templates into a rotation, and each completed `Session` snapshots exactly what was performed (sets, weights, reps, RIR) independent of the template it came from — so editing a template later never rewrites history.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+```bash
+npm install
+npm run dev       # starts Vite dev server on :5174
+npm run build     # type-checks (tsc -b) and builds for production
+npm run preview   # preview the production build locally
 ```
+
+No backend, database, or environment variables required — everything runs client-side.
