@@ -20,10 +20,17 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
-  --tab-bar-height: 60px;
+  --tab-bar-height: 62px;
+  /* How far the floating tab bar sits off the bottom edge. The safe-area inset
+     already reserves room for the home indicator, so only part of it is added
+     back — otherwise the bar floats far too high on iPhones. */
+  --tab-bar-offset: calc(4px + var(--safe-bottom) * 0.4);
+  --tab-bar-inset: calc(var(--tab-bar-height) + var(--tab-bar-offset));
   --header-height: 52px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-lg: 20px;
+  --content-max: 560px;
 }
 
 * {
@@ -110,14 +117,17 @@ a {
 }
 
 .page {
-  padding: 16px;
+  padding: 16px calc(16px + var(--safe-right)) 0 calc(16px + var(--safe-left));
   padding-top: calc(var(--safe-top) + 16px);
-  padding-bottom: calc(var(--tab-bar-height) + var(--safe-bottom) + 40px);
+  padding-bottom: calc(var(--tab-bar-inset) + 28px);
   min-height: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 20px;
 }

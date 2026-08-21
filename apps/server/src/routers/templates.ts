@@ -1,7 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { eq, and, desc } from 'drizzle-orm';
-import { templateCreateSchema, templateUpdateSchema } from '@training-pal/shared';
+import {
+  templateCreateSchema,
+  templateUpdateSchema,
+  exerciseSchema,
+  exerciseConfigKey,
+  exerciseNameKey,
+} from '@training-pal/shared';
+import type { Exercise } from '@training-pal/shared';
 import { router, protectedProcedure } from '../trpc.js';
 import { db } from '../db/index.js';
 import { templates, programCycles } from '../db/schema.js';
@@ -56,6 +63,65 @@ export const templatesRouter = router({
         .where(and(eq(templates.id, input.id), eq(templates.userId, ctx.userId)))
         .returning();
       return template;
+    }),
+
+  // Exercise names are global labels in this app: editing an exercise in one
+  // template pushes the whole config — name, targets and rest — onto every
+  // other template that holds an exercise with the same (old) name. Each
+  // template keeps its own exercise id so session history stays attached.
+  syncExercises: protectedProcedure
+    .input(
+      z.object({
+        updates: z.array(
+          z.object({
+            from: z.string().min(1),
+            exercise: exerciseSchema,
+          }),
+        ),
+        skipTemplateId: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const byName = new Map<string, Exercise>();
+      for (const update of input.updates) {
+        const key = exerciseNameKey(update.from);
+        if (!key || !update.exercise.name.trim()) continue;
+        byName.set(key, update.exercise);
+      }
+      if (byName.size === 0) return { updatedTemplateIds: [] };
+
+      const owned = await db
+        .select()
+        .from(templates)
+        .where(eq(templates.userId, ctx.userId));
+
+      const updatedTemplateIds: string[] = [];
+
+      for (const template of owned) {
+        if (template.id === input.skipTemplateId) continue;
+
+        let changed = false;
+        const exercises = template.exercises.map((exercise) => {
+          const source = byName.get(exerciseNameKey(exercise.name));
+          if (!source) return exercise;
+
+          const next = { ...source, id: exercise.id } as Exercise;
+          if (exerciseConfigKey(next) === exerciseConfigKey(exercise)) return exercise;
+
+          changed = true;
+          return next;
+        });
+
+        if (!changed) continue;
+
+        await db
+          .update(templates)
+          .set({ exercises, updatedAt: Date.now() })
+          .where(and(eq(templates.id, template.id), eq(templates.userId, ctx.userId)));
+        updatedTemplateIds.push(template.id);
+      }
+
+      return { updatedTemplateIds };
     }),
 
   delete: protectedProcedure

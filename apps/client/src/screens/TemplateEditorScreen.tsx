@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { trpc } from '../lib/trpc';
 import { generateId } from '../utils/uuid';
 import { cloneExercise, cloneExercises, copyTemplateName } from '../utils/templates';
+import { exerciseConfigKey, exerciseNameKey } from '../db/types';
 import type { Exercise, StrengthExercise } from '../db/types';
 import ExerciseFormRow from '../components/templates/ExerciseFormRow';
 import Button from '../components/common/Button';
@@ -40,6 +41,9 @@ export default function TemplateEditorScreen() {
       utils.templates.get.invalidate({ id: id! });
     },
     onError: () => alert('Failed to save template. Please try again.'),
+  });
+  const syncExercises = trpc.templates.syncExercises.useMutation({
+    onError: () => alert('Failed to sync these exercises to your other templates.'),
   });
 
   const [name, setName] = useState('');
@@ -101,8 +105,52 @@ export default function TemplateEditorScreen() {
         name: trimmedName,
         exercises: validExercises,
       });
+      await syncEditedExercises(validExercises);
     }
-    navigate('/templates');
+    navigate('/program');
+  }
+
+  // An exercise name is a global label in this app: whatever you change here —
+  // its name, its sets/reps/RIR, its rest — is pushed onto the same exercise in
+  // every other template. Only exercises that actually changed in this edit are
+  // pushed, so adding an exercise to a template never overwrites the numbers it
+  // already has elsewhere.
+  async function syncEditedExercises(saved: Exercise[]) {
+    if (!existing) return;
+
+    const previous = new Map(existing.exercises.map((e) => [e.id, e]));
+
+    // A name that appears twice in this template can't act as a single source
+    // of truth, so leave those alone rather than picking one arbitrarily.
+    const nameCounts = new Map<string, number>();
+    for (const exercise of saved) {
+      const key = exerciseNameKey(exercise.name);
+      nameCounts.set(key, (nameCounts.get(key) ?? 0) + 1);
+    }
+
+    const updates: { from: string; exercise: Exercise }[] = [];
+    const seen = new Set<string>();
+
+    for (const exercise of saved) {
+      const before = previous.get(exercise.id);
+      if (!before) continue; // newly added here — nothing to push outward
+      if (exerciseConfigKey(before) === exerciseConfigKey(exercise)) continue;
+      if ((nameCounts.get(exerciseNameKey(exercise.name)) ?? 0) > 1) continue;
+
+      const from = before.name.trim();
+      if (!from || !exercise.name.trim()) continue;
+
+      const key = exerciseNameKey(from);
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      updates.push({ from, exercise });
+    }
+
+    if (updates.length === 0) return;
+
+    await syncExercises.mutateAsync({ updates, skipTemplateId: id! });
+    utils.templates.invalidate();
   }
 
   if (loading) return <LoadingSpinner />;
@@ -113,19 +161,19 @@ export default function TemplateEditorScreen() {
   return (
     <div className="page">
       <div className={styles.topBar}>
-        <button className={styles.backBtn} onClick={() => navigate('/templates')}>
+        <button className={styles.backBtn} onClick={() => navigate('/program')}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polyline points="15 18 9 12 15 6" />
           </svg>
           Back
         </button>
-        <h1 className={styles.title}>{isNew ? 'New Template' : 'Edit Template'}</h1>
+        <h1 className={styles.title}>{isNew ? 'New Workout' : 'Edit Workout'}</h1>
       </div>
 
       <div className={styles.nameField}>
         <input
           type="text"
-          placeholder="Template name (e.g. Upper A)"
+          placeholder="Workout name (e.g. Upper A)"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className={styles.nameInput}
@@ -163,7 +211,7 @@ export default function TemplateEditorScreen() {
           </Button>
         )}
         <Button fullWidth onClick={() => handleSave()} disabled={!isValid}>
-          {isNew ? 'Create Template' : 'Save Changes'}
+          {isNew ? 'Create Workout' : 'Save Changes'}
         </Button>
       </div>
     </div>

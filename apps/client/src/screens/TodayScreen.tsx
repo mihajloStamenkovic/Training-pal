@@ -17,6 +17,7 @@ export default function TodayScreen() {
   const utils = trpc.useUtils();
   const [isSyncingMissedDays, setIsSyncingMissedDays] = useState(false);
   const [showSkipOptions, setShowSkipOptions] = useState(false);
+  const [showSwitchPicker, setShowSwitchPicker] = useState(false);
   const [showDiscardDraft, setShowDiscardDraft] = useState(false);
   const {
     data: cycle,
@@ -187,6 +188,19 @@ export default function TodayScreen() {
     setShowSkipOptions(false);
   }
 
+  // Picking a different day just moves the cycle pointer, so finishing this
+  // workout still advances to whatever comes after it in the rotation.
+  async function switchToDay(index: number) {
+    if (!cycle || index === cycle.currentIndex) {
+      setShowSwitchPicker(false);
+      return;
+    }
+    clearWorkoutDraft();
+    await updateCycle.mutateAsync({ currentIndex: index });
+    utils.cycle.get.invalidate();
+    setShowSwitchPicker(false);
+  }
+
   function discardDraft() {
     clearWorkoutDraft();
     setShowDiscardDraft(false);
@@ -210,16 +224,34 @@ export default function TodayScreen() {
 
   // No program set up
   if (!cycle || cycle.sequence.length === 0) {
+    const hasTemplates = (templates?.length ?? 0) > 0;
     return (
       <div className="page">
         <h1 className="page-title">Today</h1>
         <EmptyState
-          title="No program set up"
-          description="Create workout templates and set up your program cycle to get started."
+          title={hasTemplates ? 'No rotation yet' : 'No workouts yet'}
+          description={
+            hasTemplates
+              ? 'Add your templates to a rotation and they will repeat in order.'
+              : 'Build your first workout, then add it to your rotation.'
+          }
           action={
-            <Button onClick={() => navigate('/templates')}>
-              Set Up Program
-            </Button>
+            <div className={styles.emptyActions}>
+              {hasTemplates ? (
+                <>
+                  <Button fullWidth onClick={() => navigate('/program')}>
+                    Build Rotation
+                  </Button>
+                  <Button variant="secondary" fullWidth onClick={() => navigate('/program/new')}>
+                    + New Workout
+                  </Button>
+                </>
+              ) : (
+                <Button fullWidth onClick={() => navigate('/program/new')}>
+                  + Create Your First Workout
+                </Button>
+              )}
+            </div>
           }
         />
       </div>
@@ -264,7 +296,42 @@ export default function TodayScreen() {
       <h1 className="page-title">Today</h1>
 
       <div className={styles.workoutCard}>
-        <h2 className={styles.workoutName}>{currentTemplate?.name ?? 'Unknown'}</h2>
+        <div className={styles.workoutHead}>
+          <h2 className={styles.workoutName}>{currentTemplate?.name ?? 'Unknown'}</h2>
+          {cycle.sequence.length > 1 && (
+            <button
+              className={styles.changeBtn}
+              onClick={() => setShowSwitchPicker((open) => !open)}
+            >
+              {showSwitchPicker ? 'Close' : 'Change'}
+            </button>
+          )}
+        </div>
+
+        {showSwitchPicker && (
+          <div className={styles.switchPicker}>
+            <p className={styles.switchLabel}>Do this instead today</p>
+            {cycle.sequence.map((templateId, i) => {
+              const tmpl = templateMap.get(templateId);
+              const isCurrent = i === cycle.currentIndex;
+              return (
+                <button
+                  key={`switch-${templateId}-${i}`}
+                  className={`${styles.switchOption} ${isCurrent ? styles.switchOptionCurrent : ''}`}
+                  onClick={() => switchToDay(i)}
+                >
+                  <span className={styles.switchDay}>Day {i + 1}</span>
+                  <span className={styles.switchName}>{tmpl?.name ?? 'Deleted Template'}</span>
+                  {isCurrent && <span className={styles.switchBadge}>Today</span>}
+                </button>
+              );
+            })}
+            <p className={styles.switchHint}>
+              The rotation carries on from whichever workout you pick.
+            </p>
+          </div>
+        )}
+
         {resumableDraft && (
           <div className={styles.resumeBanner}>
             <span className={styles.resumeTitle}>Workout in progress</span>

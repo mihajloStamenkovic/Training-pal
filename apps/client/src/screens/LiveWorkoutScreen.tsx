@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { trpc, trpcClient } from '../lib/trpc';
 import { todayString } from '../utils/dates';
 import { getLastSessionExercises } from '../utils/predictions';
+import { exerciseConfigKey, exerciseNameKey } from '../db/types';
 import { useRestTimer } from '../hooks/useRestTimer';
 import { useStopwatch, formatStopwatch } from '../hooks/useStopwatch';
 import {
@@ -15,6 +16,7 @@ import {
 import type {
   Exercise,
   StrengthExercise,
+  CardioExercise,
   SessionExercise,
   SessionSet,
   StrengthSet,
@@ -59,6 +61,9 @@ export default function LiveWorkoutScreen() {
   const updateTemplateMutation = trpc.templates.update.useMutation({
     onError: () => alert('Failed to update template targets. Please try again.'),
   });
+  const syncExercisesMutation = trpc.templates.syncExercises.useMutation({
+    onError: () => alert('Failed to carry these numbers over to your other workouts.'),
+  });
 
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [templateId, setTemplateId] = useState('');
@@ -79,31 +84,42 @@ export default function LiveWorkoutScreen() {
   const timer = useRestTimer();
   const elapsedSeconds = useStopwatch(startedAt);
 
-  // Prefill logic: use last session data if available, otherwise fall back to template targets
+  // Prefill priority: template targets first, last session as fallback.
+  // Finishing a workout writes what was actually performed back into the
+  // template, so the template is always the freshest source — and edits made in
+  // the template editor take effect the very next time the workout runs.
   function prefillSet(ex: Exercise, setIndex: number, preds: Map<string, SessionExercise>) {
     const pred = preds.get(ex.id);
     const predSet = pred?.type === ex.type ? pred.sets[setIndex] : null;
 
     if (ex.type === 'strength') {
-      // Priority: last session > template target
-      if (predSet) {
+      const target = (ex as StrengthExercise).sets[setIndex];
+      if (target && (target.weight > 0 || target.reps > 0)) {
+        setInput({ ...emptyInput, weight: String(target.weight || ''), reps: String(target.reps || ''), rir: target.rir });
+      } else if (predSet) {
         const s = predSet as StrengthSet;
         setInput({ ...emptyInput, weight: String(s.weight), reps: String(s.reps), rir: s.rir });
-      } else {
-        const target = (ex as StrengthExercise).sets[setIndex];
-        if (target) {
-          setInput({ ...emptyInput, weight: String(target.weight || ''), reps: String(target.reps || ''), rir: target.rir });
-        } else {
-          setInput({ ...emptyInput });
-        }
-      }
-    } else {
-      if (predSet) {
-        const c = predSet as CardioSet;
-        setInput({ ...emptyInput, incline: String(c.incline), speed: String(c.speed), durationMinutes: String(c.durationMinutes) });
+      } else if (target) {
+        setInput({ ...emptyInput, rir: target.rir });
       } else {
         setInput({ ...emptyInput });
       }
+      return;
+    }
+
+    const cardio = ex as CardioExercise;
+    if (cardio.durationMinutes > 0 || cardio.speed > 0 || cardio.incline > 0) {
+      setInput({
+        ...emptyInput,
+        incline: String(cardio.incline),
+        speed: String(cardio.speed),
+        durationMinutes: String(cardio.durationMinutes),
+      });
+    } else if (predSet) {
+      const c = predSet as CardioSet;
+      setInput({ ...emptyInput, incline: String(c.incline), speed: String(c.speed), durationMinutes: String(c.durationMinutes) });
+    } else {
+      setInput({ ...emptyInput });
     }
   }
 
@@ -319,7 +335,7 @@ export default function LiveWorkoutScreen() {
 
     if (!isManualLog) {
       // Update template targets with what was actually performed.
-      const updatedExercises = exercises.map((ex) => {
+      const updatedExercises: Exercise[] = exercises.map((ex) => {
         const done = completedSets.get(ex.id);
         if (!done || done.length === 0) return ex;
 
@@ -347,6 +363,30 @@ export default function LiveWorkoutScreen() {
         name: templateName,
         exercises: updatedExercises,
       });
+
+      // Exercises are global: a 70kg x 6 bench logged here becomes the target
+      // for that same bench press in every other template too, so the next
+      // workout that includes it starts from what was actually lifted.
+      const nameCounts = new Map<string, number>();
+      for (const ex of updatedExercises) {
+        const key = exerciseNameKey(ex.name);
+        nameCounts.set(key, (nameCounts.get(key) ?? 0) + 1);
+      }
+
+      const syncUpdates = updatedExercises.flatMap((ex, i) => {
+        if (!ex.name.trim()) return [];
+        if (exerciseConfigKey(ex) === exerciseConfigKey(exercises[i])) return [];
+        // An ambiguous name can't act as a single source of truth.
+        if ((nameCounts.get(exerciseNameKey(ex.name)) ?? 0) > 1) return [];
+        return [{ from: ex.name, exercise: ex }];
+      });
+
+      if (syncUpdates.length > 0) {
+        await syncExercisesMutation.mutateAsync({
+          updates: syncUpdates,
+          skipTemplateId: templateId,
+        });
+      }
     }
 
     if (!isManualLog && cycle) {
@@ -384,17 +424,17 @@ export default function LiveWorkoutScreen() {
     ? input.weight !== '' && input.reps !== '' && input.rir !== null
     : input.incline !== '' && input.speed !== '' && input.durationMinutes !== '';
 
-  // Build pending set hints from template targets or predictions
+  // Pending set hints follow the same priority as the prefill: template target
+  // first, last session as fallback.
   function getPendingHint(setIndex: number): SessionSet | null {
-    // Try last session first
-    const predSet = currentPred?.type === currentEx.type ? currentPred.sets[setIndex] : null;
-    if (predSet) return predSet;
-    // Fall back to template target for strength
     if (currentEx.type === 'strength') {
       const target = (currentEx as StrengthExercise).sets[setIndex];
-      if (target) return { setNumber: setIndex + 1, weight: target.weight, reps: target.reps, rir: target.rir };
+      if (target && (target.weight > 0 || target.reps > 0)) {
+        return { setNumber: setIndex + 1, weight: target.weight, reps: target.reps, rir: target.rir };
+      }
     }
-    return null;
+    const predSet = currentPred?.type === currentEx.type ? currentPred.sets[setIndex] : null;
+    return predSet ?? null;
   }
 
   return (

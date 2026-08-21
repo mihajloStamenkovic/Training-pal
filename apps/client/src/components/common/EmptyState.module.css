@@ -3,8 +3,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 44px 20px;
   text-align: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
 .title {
@@ -22,5 +25,10 @@
 }
 
 .action {
-  margin-top: 20px;
+  margin-top: 22px;
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }

@@ -1,62 +1,40 @@
-.topBar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+.section {
+  margin-bottom: 28px;
 }
 
-.backBtn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: transparent;
-  color: var(--accent);
-  font-size: 15px;
-  font-weight: 500;
-  min-height: 36px;
-  padding: 6px 8px;
-  border-radius: var(--radius-sm);
-}
-
-.title {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.statusBar {
+.sectionHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.statusText {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.resetBtn {
+.sectionTitle {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
   color: var(--text-muted);
-  background: transparent;
-  min-height: 32px;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-}
-
-.resetBtn:active {
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
 }
 
 .resetArea {
   position: relative;
+}
+
+.resetBtn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+}
+
+.resetBtn:active {
+  background: rgba(34, 197, 94, 0.22);
 }
 
 .resetDropdown {
@@ -64,17 +42,27 @@
   top: 100%;
   right: 0;
   margin-top: 6px;
-  min-width: 200px;
-  max-height: 240px;
+  min-width: 220px;
+  max-height: 260px;
   overflow-y: auto;
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 4px;
+  border-radius: var(--radius);
+  padding: 8px;
   z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.8);
+}
+
+.resetHint {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 2px 4px 6px;
 }
 
 .resetOption {
@@ -84,12 +72,12 @@
   width: 100%;
   padding: 10px 12px;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
   text-align: left;
-  min-height: 40px;
+  min-height: 42px;
 }
 
 .resetOption:active {
@@ -120,7 +108,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .sequenceItem {
@@ -129,12 +117,13 @@
   gap: 10px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 12px 14px;
 }
 
 .sequenceItem.current {
-  border-color: var(--accent);
+  border-color: rgba(34, 197, 94, 0.5);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.08), var(--bg-secondary));
 }
 
 .dayNum {
@@ -157,12 +146,14 @@
 }
 
 .currentBadge {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   color: var(--accent);
   background: rgba(34, 197, 94, 0.15);
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
   flex-shrink: 0;
 }
 
@@ -179,7 +170,7 @@
   width: 30px;
   height: 30px;
   min-height: 30px;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: var(--text-muted);
 }
@@ -193,15 +184,22 @@
   background: var(--bg-tertiary);
 }
 
-.addArea {
-  margin-top: 8px;
+.emptyNote {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
 }
 
 .addBtn {
   width: 100%;
   padding: 14px;
   min-height: 48px;
-  background: var(--bg-secondary);
+  background: transparent;
   border: 1px dashed var(--border);
   border-radius: var(--radius);
   color: var(--text-secondary);
@@ -210,7 +208,7 @@
 }
 
 .addBtn:active {
-  background: var(--bg-tertiary);
+  background: var(--bg-secondary);
 }
 
 .picker {
@@ -218,7 +216,6 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
-  margin-top: 8px;
 }
 
 .pickerLabel {
@@ -255,12 +252,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: 12px 14px;
+  min-height: 48px;
   background: var(--bg-tertiary);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 15px;
   font-weight: 500;
+  text-align: left;
 }
 
 .pickerItem:active {
@@ -270,4 +270,5 @@
 .pickerMeta {
   font-size: 12px;
   color: var(--text-muted);
+  flex-shrink: 0;
 }

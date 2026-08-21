@@ -22,7 +22,7 @@ export default function TemplateCard({ template, onDelete, onDuplicate }: Templa
     .join(', ');
 
   return (
-    <div className={styles.card} onClick={() => navigate(`/templates/${template.id}`)}>
+    <div className={styles.card} onClick={() => navigate(`/program/${template.id}`)}>
       <div className={styles.info}>
         <h3 className={styles.name}>{template.name}</h3>
         <p className={styles.meta}>

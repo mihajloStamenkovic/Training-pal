@@ -1,21 +1,133 @@
 .workoutCard {
-  background: var(--bg-secondary);
+  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 55%);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.8);
+}
+
+.workoutHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
 .workoutName {
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
-  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.changeBtn {
+  flex-shrink: 0;
+  min-height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+}
+
+.changeBtn:active {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
 }
 
 .workoutMeta {
   font-size: 14px;
   color: var(--text-secondary);
   margin-bottom: 16px;
+}
+
+.switchPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.switchLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.switchOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.switchOption:active {
+  background: var(--bg-tertiary);
+}
+
+.switchOptionCurrent {
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.switchDay {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  width: 40px;
+}
+
+.switchName {
+  flex: 1;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.switchBadge {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.switchHint {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.emptyActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .resumeBanner {
