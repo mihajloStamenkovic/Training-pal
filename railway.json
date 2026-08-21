@@ -1,0 +1,9 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @training-pal/shared build && pnpm --filter @training-pal/server build"
+  },
+  "deploy": {
+    "startCommand": "pnpm --filter @training-pal/server start"
+  }
+}
