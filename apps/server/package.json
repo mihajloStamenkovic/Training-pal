@@ -8,6 +8,7 @@
     "build": "tsc -b",
     "start": "node dist/index.js",
     "migrate": "tsx src/db/migrate.ts",
+    "migrate:deploy": "node dist/db/migrate.js",
     "generate": "drizzle-kit generate"
   },
   "dependencies": {

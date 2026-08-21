@@ -4,6 +4,6 @@
     "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @training-pal/shared build && pnpm --filter @training-pal/server build"
   },
   "deploy": {
-    "startCommand": "pnpm --filter @training-pal/server start"
+    "startCommand": "pnpm --filter @training-pal/server migrate:deploy && pnpm --filter @training-pal/server start"
   }
 }
