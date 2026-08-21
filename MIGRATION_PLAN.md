@@ -559,19 +559,34 @@ Verify: Drop and recreate the database. Run pnpm --filter @training-pal/server m
 
 ---
 
-## Railway Deployment (added — not in original plan)
+## Railway + Vercel Deployment ✅ (added — not in original plan)
 
-Deploy the server + Postgres to Railway, and point the Vercel-hosted client at it. Needs a Railway account (external service — user must create/own it).
+Server + Postgres on Railway; client on Vercel.
 
-**Code changes done ✅:**
-- `apps/client/src/lib/trpc.ts`: TRPC_URL now resolves from `VITE_API_URL` (unset in dev → relative `/trpc` via the Vite proxy; set in prod → full Railway server URL).
-- `apps/server/src/index.ts`: CORS now also allow-lists `CLIENT_ORIGIN` (comma-separated) alongside `localhost:*`, for the production Vercel domain.
+**Live URLs:**
+- Server: `https://training-pal-production.up.railway.app`
+- Client: `https://client-seven-drab-22.vercel.app`
 
-1. Create a Railway project, add a PostgreSQL plugin, copy its connection string.
-2. Deploy `apps/server` to Railway (root directory `apps/server`, build via its own package.json). Set env vars: `DATABASE_URL` (from step 1), `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`.
-3. Run `pnpm migrate` against the Railway Postgres instance (via Railway's shell or a one-off deploy command) to create tables.
-4. On the client (Vercel), set `VITE_CLERK_PUBLISHABLE_KEY` and point API calls at the Railway server's public URL (either a `VITE_API_URL` env var consumed by `lib/trpc.ts`, or a Vercel rewrite/proxy to keep relative `/trpc` paths in production too).
-5. Update CORS on the server to allow the production Vercel domain (currently only allows `http://localhost:*`).
+**Code changes:**
+- `apps/client/src/lib/trpc.ts`: TRPC_URL resolves from `VITE_API_URL` (unset in dev → relative `/trpc` via the Vite proxy; set in prod → full Railway server URL).
+- `apps/server/src/index.ts`: CORS allow-lists `CLIENT_ORIGIN` (comma-separated) alongside `localhost:*`; Clerk middleware scoped to `/trpc` so `/health` stays a pure liveness signal.
+- `apps/server/package.json`: added `build`, `start`, `migrate:deploy` scripts (Railpack found no start command originally).
+- `railway.json`: build + start commands scoped to the workspace, with `migrate:deploy` chained ahead of start so schema changes apply automatically on every deploy.
+- Root `package.json`: pinned `packageManager` (Railpack defaulted to npm without it); `postinstall` builds `packages/shared`.
+- `packages/shared`: points `main`/`types` at compiled `dist` (raw `.ts` breaks under plain `node`), and owns `typescript` directly.
+- `apps/server`: owns `@types/node` directly.
+
+**Deployment gotchas hit (worth remembering):**
+1. Railway **Root Directory must stay at the repo root**, not `apps/server` — the pnpm workspace needs the root lockfile to resolve `@training-pal/shared`.
+2. `packages/shared` and `apps/server` were both missing direct dependencies (`typescript`, `@types/node`) that happened to resolve locally. `@types/node` in particular was being satisfied by a **stray `C:\Users\<user>\node_modules`** outside the repo, so local builds passed while clean containers failed with TS2688. Verified the fix with `tsc --traceResolution`.
+3. Vercel's per-deployment **Redeploy button rebuilds that deployment's original commit** — redeploying an old one failed with "Root Directory apps/client does not exist" because `apps/` didn't exist yet at that commit.
+
+**Env vars — Railway:** `DATABASE_URL`, `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `CLIENT_ORIGIN`, `PORT=8080`
+**Env vars — Vercel:** `VITE_CLERK_PUBLISHABLE_KEY`, `VITE_API_URL` (Root Directory: `apps/client`)
+
+**Verified:** `/health` → 200; `/trpc` unauthenticated → 401; CORS allows the Vercel origin; both `VITE_*` vars baked into the deployed bundle; live site renders Clerk sign-in with no console errors.
+
+**Known follow-up:** Clerk is running on **development keys** (`pk_test_`/`sk_test_`) in production. These have strict usage limits. For sustained use, create a Clerk production instance and swap in the `pk_live_`/`sk_live_` keys.
 
 ## Phase 5: Data Migration (optional)
 
