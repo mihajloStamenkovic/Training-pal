@@ -1,0 +1,29 @@
+{
+  "name": "@training-pal/server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "migrate": "tsx src/db/migrate.ts",
+    "generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.60",
+    "@training-pal/shared": "workspace:*",
+    "@trpc/server": "^11.18.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "postgres": "^3.4.9",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.12",
+    "typescript": "~5.9.3"
+  }
+}

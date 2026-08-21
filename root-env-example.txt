@@ -1,0 +1,14 @@
+# This repo has two apps, each with its own .env file:
+#
+# apps/server/.env
+#   DATABASE_URL=postgresql://user:password@host:5432/training_pal
+#   CLERK_SECRET_KEY=sk_...
+#   CLERK_PUBLISHABLE_KEY=pk_...
+#   PORT=3001   (optional, defaults to 3001)
+#
+# apps/client/.env
+#   VITE_CLERK_PUBLISHABLE_KEY=pk_...
+#
+# Rename this file to .env.example at the repo root (safe to commit — no
+# real values). Claude Code cannot write .env/.env.example files directly
+# due to a permission deny rule.

@@ -1,23 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(npm create:*)",
-      "Bash(cp -r temp-scaffold/* .)",
-      "Bash(cp temp-scaffold/.gitignore .)",
-      "Bash(rm -rf temp-scaffold)",
-      "Bash(npm install:*)",
-      "Bash(cd:*)",
-      "Bash(node -e \":*)",
-      "Bash(npx tsc:*)",
-      "Bash(npm run:*)",
-      "Bash(npm ls:*)",
-      "Bash(npm info:*)",
-      "Bash(node -e \"const sharp = require\\(''sharp''\\)\")",
-      "Bash(npx sharp-cli:*)",
-      "Bash(where magick:*)",
-      "Bash(where convert:*)",
-      "Bash(where ffmpeg:*)",
-      "Bash(npx vite:*)"
+      "Bash(*)",
+      "Read(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "LS(*)",
+      "WebFetch(*)",
+      "WebSearch",
+      "Task(*)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)"
     ]
   }
 }
