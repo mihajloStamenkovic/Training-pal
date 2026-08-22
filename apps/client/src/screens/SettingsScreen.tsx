@@ -31,7 +31,7 @@ export default function SettingsScreen() {
       <p className={styles.footerText}>
         Training Pal {VERSION}
         <br />
-        All data is stored locally on your device.
+        Your workouts sync to your account.
       </p>
     </div>
   );
