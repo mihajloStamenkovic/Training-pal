@@ -3,7 +3,6 @@ import type {
   Exercise,
   SessionExercise,
   SessionSet,
-  StrengthExercise,
   StrengthSet,
 } from '../db/types';
 
@@ -54,9 +53,13 @@ export function sessionStats(exerciseData: SessionExercise[]): { sets: number; t
   return { sets, tonnes: kg / 1000 };
 }
 
-/** The heaviest set of a strength exercise — the number the row shows. */
-export function heaviestSet(sets: StrengthSet[]): StrengthSet | null {
-  let best: StrengthSet | null = null;
+/**
+ * The heaviest entry in a list of weighted things — logged sets, planned
+ * targets, either one. First of a tie wins, so an unchanged top set keeps
+ * its position. Returns null only for an empty list.
+ */
+export function heaviest<T extends { weight: number }>(sets: readonly T[]): T | null {
+  let best: T | null = null;
   for (const set of sets) {
     if (!best || set.weight > best.weight) best = set;
   }
@@ -72,7 +75,7 @@ export interface RowFigure {
 /** The `[big number] [unit] [× reps]` triple on a Today / done row. */
 export function rowFigure(exercise: Exercise): RowFigure {
   if (exercise.type === 'strength') {
-    const target = heaviestTarget(exercise);
+    const target = heaviest(exercise.sets);
     return {
       value: formatNumber(target?.weight ?? 0),
       unit: 'kg',
@@ -82,14 +85,6 @@ export function rowFigure(exercise: Exercise): RowFigure {
   return { value: String(exercise.durationMinutes), unit: 'min', trailing: null };
 }
 
-function heaviestTarget(exercise: StrengthExercise) {
-  let best = exercise.sets[0] ?? null;
-  for (const set of exercise.sets) {
-    if (set.weight > best.weight) best = set;
-  }
-  return best;
-}
-
 /** The muted second line of a Today row. */
 export function exerciseMeta(exercise: Exercise): string {
   if (exercise.type === 'strength') {
@@ -97,13 +92,14 @@ export function exerciseMeta(exercise: Exercise): string {
     const parts = [`${count} set${count !== 1 ? 's' : ''}`];
     const first = exercise.sets[0];
     if (first) parts.push(`RIR ${first.rir}`);
-    if (exercise.restSeconds > 0) parts.push(`rest ${formatRest(exercise.restSeconds)}`);
+    if (exercise.restSeconds > 0) parts.push(`rest ${formatClock(exercise.restSeconds)}`);
     return parts.join(' · ');
   }
   return `incline ${formatNumber(exercise.incline)} · speed ${formatNumber(exercise.speed)}`;
 }
 
-export function formatRest(seconds: number): string {
+/** m:ss — a rest target, a countdown, anything under an hour. */
+export function formatClock(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, '0')}`;

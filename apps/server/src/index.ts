@@ -1,10 +1,13 @@
-import './env.js';
 import express from 'express';
 import cors from 'cors';
 import { clerkMiddleware } from '@clerk/express';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './router.js';
 import { createContext } from './trpc.js';
+import { requireAuthEnv } from './env.js';
+
+// Fail fast on a missing Clerk key rather than 500ing on the first request.
+requireAuthEnv();
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;

@@ -1,13 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
-import { trpc, TRPC_URL } from './trpc';
-import { getAuthToken } from './authToken';
-
-async function authHeaders() {
-  const token = await getAuthToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+import { authHeaders, trpc, TRPC_URL } from './trpc';
 
 export default function QueryProvider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(

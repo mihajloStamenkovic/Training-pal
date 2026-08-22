@@ -2,9 +2,26 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { eq, and, desc } from 'drizzle-orm';
 import { sessionCreateSchema, sessionBulkCreateSchema } from '@training-pal/shared';
+import type { Session } from '@training-pal/shared';
 import { router, protectedProcedure } from '../trpc.js';
 import { db } from '../db/index.js';
 import { sessions } from '../db/schema.js';
+
+/** One insertable row. Both create paths go through this. */
+function toRow(userId: string, input: Omit<Session, 'id'>) {
+  return {
+    id: randomUUID(),
+    userId,
+    templateId: input.templateId,
+    templateName: input.templateName,
+    date: input.date,
+    status: input.status,
+    startedAt: input.startedAt,
+    finishedAt: input.finishedAt,
+    durationSeconds: input.durationSeconds,
+    exerciseData: input.exerciseData,
+  };
+}
 
 export const sessionsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -46,18 +63,7 @@ export const sessionsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const [session] = await db
         .insert(sessions)
-        .values({
-          id: randomUUID(),
-          userId: ctx.userId,
-          templateId: input.templateId,
-          templateName: input.templateName,
-          date: input.date,
-          status: input.status,
-          startedAt: input.startedAt,
-          finishedAt: input.finishedAt,
-          durationSeconds: input.durationSeconds,
-          exerciseData: input.exerciseData,
-        })
+        .values(toRow(ctx.userId, input))
         .returning();
       return session;
     }),
@@ -68,20 +74,7 @@ export const sessionsRouter = router({
       if (input.length === 0) return [];
       return db
         .insert(sessions)
-        .values(
-          input.map((s) => ({
-            id: randomUUID(),
-            userId: ctx.userId,
-            templateId: s.templateId,
-            templateName: s.templateName,
-            date: s.date,
-            status: s.status,
-            startedAt: s.startedAt,
-            finishedAt: s.finishedAt,
-            durationSeconds: s.durationSeconds,
-            exerciseData: s.exerciseData,
-          })),
-        )
+        .values(input.map((session) => toRow(ctx.userId, session)))
         .returning();
     }),
 });

@@ -12,7 +12,8 @@ import { getAuthToken } from './authToken';
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 export const TRPC_URL = `${API_BASE}/trpc`;
 
-async function authHeaders() {
+/** Shared by both clients below — the token is resolved per request. */
+export async function authHeaders() {
   const token = await getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 }

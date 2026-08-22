@@ -1,6 +1,6 @@
 import { CaretDown, CaretUp, Copy, Plus, X } from '@phosphor-icons/react';
 import type { Exercise, StrengthExercise, StrengthSetTarget } from '../../db/types';
-import { formatNumber, formatRest } from '../../utils/workoutStats';
+import { formatClock, formatNumber, heaviest } from '../../utils/workoutStats';
 import styles from './ExerciseFormRow.module.css';
 
 interface ExerciseFormRowProps {
@@ -21,11 +21,8 @@ const defaultSet: StrengthSetTarget = { weight: 0, reps: 0, rir: 2 };
 /** The one-line version of an exercise: "3 × 26kg" or "12 min". */
 function summarise(exercise: Exercise): string {
   if (exercise.type === 'strength') {
-    const heaviest = exercise.sets.reduce(
-      (best, set) => (set.weight > best.weight ? set : best),
-      exercise.sets[0] ?? defaultSet,
-    );
-    return `${exercise.sets.length} × ${formatNumber(heaviest.weight)}kg`;
+    const top = heaviest(exercise.sets);
+    return `${exercise.sets.length} × ${formatNumber(top?.weight ?? 0)}kg`;
   }
   return `${exercise.durationMinutes} min`;
 }
@@ -174,7 +171,7 @@ export default function ExerciseFormRow({
               }
               aria-label="Rest between sets, in seconds"
             />
-            <span className={styles.restHint}>{formatRest(exercise.restSeconds)}</span>
+            <span className={styles.restHint}>{formatClock(exercise.restSeconds)}</span>
           </label>
         )}
       </div>

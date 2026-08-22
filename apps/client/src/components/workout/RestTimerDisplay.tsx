@@ -1,4 +1,5 @@
 import { FastForward } from '@phosphor-icons/react';
+import { formatClock } from '../../utils/workoutStats';
 import styles from './RestTimerDisplay.module.css';
 
 const RADIUS = 110;
@@ -15,12 +16,6 @@ interface RestTimerDisplayProps {
   onSkip: () => void;
   onAddTime: () => void;
   onEdit?: () => void;
-}
-
-function formatClock(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 export default function RestTimerDisplay({

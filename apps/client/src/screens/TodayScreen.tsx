@@ -17,7 +17,7 @@ import {
   exerciseMeta,
   formatNumber,
   formatTonnes,
-  heaviestSet,
+  heaviest,
   plannedStats,
   rowFigure,
   sessionStats,
@@ -31,12 +31,6 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import PageHeader from '../components/layout/PageHeader';
 import styles from './TodayScreen.module.css';
-
-/** The heaviest target set of a strength exercise, as a SessionSet shape. */
-function heaviestTargetWeight(sets: { weight: number; reps: number; rir: number }[]): number | null {
-  const best = heaviestSet(sets.map((s, i) => ({ setNumber: i + 1, ...s })));
-  return best ? best.weight : null;
-}
 
 export default function TodayScreen() {
   const navigate = useNavigate();
@@ -310,13 +304,13 @@ export default function TodayScreen() {
     const previousBest = new Map(
       (previous?.exerciseData ?? [])
         .filter((ex) => ex.type === 'strength')
-        .map((ex) => [ex.exerciseName, heaviestSet(ex.sets as StrengthSet[])?.weight ?? null]),
+        .map((ex) => [ex.exerciseName, heaviest(ex.sets as StrengthSet[])?.weight ?? null]),
     );
 
     const liftRows = outcomeExercises
       .filter((ex) => ex.type === 'strength' && ex.sets.length > 0)
       .map((ex) => {
-        const best = heaviestSet(ex.sets as StrengthSet[]);
+        const best = heaviest(ex.sets as StrengthSet[]);
         const before = previousBest.get(ex.exerciseName) ?? null;
         const delta = best && before !== null ? best.weight - before : 0;
         return { name: ex.exerciseName, weight: best?.weight ?? 0, delta };
@@ -414,7 +408,7 @@ export default function TodayScreen() {
   const lastBest = new Map(
     (lastSession?.exerciseData ?? [])
       .filter((ex) => ex.type === 'strength')
-      .map((ex) => [ex.exerciseId, heaviestSet(ex.sets as StrengthSet[])?.weight ?? null]),
+      .map((ex) => [ex.exerciseId, heaviest(ex.sets as StrengthSet[])?.weight ?? null]),
   );
   let movedUpName: string | null = null;
   let movedUpDelta = 0;
@@ -422,7 +416,7 @@ export default function TodayScreen() {
     if (ex.type !== 'strength') continue;
     const before = lastBest.get(ex.id);
     if (before == null) continue;
-    const target = heaviestTargetWeight(ex.sets);
+    const target = heaviest(ex.sets)?.weight ?? null;
     if (target !== null && target > before) {
       movedUpName = ex.name;
       movedUpDelta = target - before;

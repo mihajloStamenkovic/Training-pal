@@ -500,6 +500,18 @@ export default function LiveWorkoutScreen() {
     ? 'Skip rest, next exercise'
     : `Skip rest, start set ${currentSetNum}`;
 
+  const abandonDialog = showAbandon ? (
+    <ConfirmDialog
+      title="Abandon this workout?"
+      message="Your progress for this session will be discarded — nothing goes into your history."
+      confirmLabel="Abandon"
+      cancelLabel="Keep training"
+      danger
+      onConfirm={handleAbandon}
+      onCancel={() => setShowAbandon(false)}
+    />
+  ) : null;
+
   const header = (
     <div className={styles.strip}>
       <div className={styles.stopwatch}>{formatStopwatch(elapsedSeconds)}</div>
@@ -529,17 +541,7 @@ export default function LiveWorkoutScreen() {
           onAddTime={() => timer.extend(30)}
           onEdit={lastLogged ? reopenLastSet : undefined}
         />
-        {showAbandon && (
-          <ConfirmDialog
-            title="Abandon this workout?"
-            message="Your progress for this session will be discarded — nothing goes into your history."
-            confirmLabel="Abandon"
-            cancelLabel="Keep training"
-            danger
-            onConfirm={handleAbandon}
-            onCancel={() => setShowAbandon(false)}
-          />
-        )}
+        {abandonDialog}
       </div>
     );
   }
@@ -737,17 +739,7 @@ export default function LiveWorkoutScreen() {
         </div>
       </div>
 
-      {showAbandon && (
-        <ConfirmDialog
-          title="Abandon this workout?"
-          message="Your progress for this session will be discarded — nothing goes into your history."
-          confirmLabel="Abandon"
-          cancelLabel="Keep training"
-          danger
-          onConfirm={handleAbandon}
-          onCancel={() => setShowAbandon(false)}
-        />
-      )}
+      {abandonDialog}
     </div>
   );
 }
