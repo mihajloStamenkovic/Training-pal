@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { programCycleUpsertSchema, programCycleUpdateSchema } from '@training-pal/shared';
 import { router, protectedProcedure } from '../trpc.js';
@@ -39,14 +40,23 @@ export const cycleRouter = router({
       return cycle;
     }),
 
+  // The input schema is .partial(), so an empty patch is a valid request.
+  // Drizzle throws "No values to set" on .set({}), so short-circuit to a read.
   update: protectedProcedure
     .input(programCycleUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      const [cycle] = await db
-        .update(programCycles)
-        .set(input)
-        .where(eq(programCycles.userId, ctx.userId))
-        .returning();
+      const [cycle] =
+        Object.keys(input).length === 0
+          ? await db.select().from(programCycles).where(eq(programCycles.userId, ctx.userId))
+          : await db
+              .update(programCycles)
+              .set(input)
+              .where(eq(programCycles.userId, ctx.userId))
+              .returning();
+
+      if (!cycle) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'No program cycle to update' });
+      }
       return cycle;
     }),
 });

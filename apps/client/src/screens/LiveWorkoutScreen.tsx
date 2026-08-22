@@ -362,6 +362,23 @@ export default function LiveWorkoutScreen() {
 
   async function finishWorkout() {
     timer.cancel();
+    try {
+      await saveFinishedWorkout();
+    } catch {
+      // Each mutation's onError has already surfaced the failure. Bail out
+      // without clearing the draft or navigating, so the session is still
+      // here to retry rather than silently lost.
+      return;
+    }
+
+    utils.sessions.invalidate();
+    utils.cycle.get.invalidate();
+    utils.templates.invalidate();
+    clearWorkoutDraft();
+    navigate('/');
+  }
+
+  async function saveFinishedWorkout() {
     const now = Date.now();
     const sessionDate = isManualLog ? manualDate! : todayString();
 
@@ -439,19 +456,13 @@ export default function LiveWorkoutScreen() {
       }
     }
 
-    if (!isManualLog && cycle) {
+    if (!isManualLog && cycle && cycle.sequence.length > 0) {
       const nextIndex = (cycle.currentIndex + 1) % cycle.sequence.length;
       await updateCycleMutation.mutateAsync({
         currentIndex: nextIndex,
         lastCompletedDate: sessionDate,
       });
     }
-
-    utils.sessions.invalidate();
-    utils.cycle.get.invalidate();
-    utils.templates.invalidate();
-    clearWorkoutDraft();
-    navigate('/');
   }
 
   function handleAbandon() {

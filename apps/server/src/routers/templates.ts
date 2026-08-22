@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { eq, and, desc } from 'drizzle-orm';
 import {
@@ -62,6 +63,10 @@ export const templatesRouter = router({
         })
         .where(and(eq(templates.id, input.id), eq(templates.userId, ctx.userId)))
         .returning();
+
+      if (!template) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Template not found' });
+      }
       return template;
     }),
 
@@ -90,67 +95,71 @@ export const templatesRouter = router({
       }
       if (byName.size === 0) return { updatedTemplateIds: [] };
 
-      const owned = await db
-        .select()
-        .from(templates)
-        .where(eq(templates.userId, ctx.userId));
+      return db.transaction(async (tx) => {
+        const owned = await tx
+          .select()
+          .from(templates)
+          .where(eq(templates.userId, ctx.userId));
 
-      const updatedTemplateIds: string[] = [];
+        const updatedTemplateIds: string[] = [];
 
-      for (const template of owned) {
-        if (template.id === input.skipTemplateId) continue;
+        for (const template of owned) {
+          if (template.id === input.skipTemplateId) continue;
 
-        let changed = false;
-        const exercises = template.exercises.map((exercise) => {
-          const source = byName.get(exerciseNameKey(exercise.name));
-          if (!source) return exercise;
+          let changed = false;
+          const exercises = template.exercises.map((exercise) => {
+            const source = byName.get(exerciseNameKey(exercise.name));
+            if (!source) return exercise;
 
-          const next = { ...source, id: exercise.id } as Exercise;
-          if (exerciseConfigKey(next) === exerciseConfigKey(exercise)) return exercise;
+            const next = { ...source, id: exercise.id } as Exercise;
+            if (exerciseConfigKey(next) === exerciseConfigKey(exercise)) return exercise;
 
-          changed = true;
-          return next;
-        });
+            changed = true;
+            return next;
+          });
 
-        if (!changed) continue;
+          if (!changed) continue;
 
-        await db
-          .update(templates)
-          .set({ exercises, updatedAt: Date.now() })
-          .where(and(eq(templates.id, template.id), eq(templates.userId, ctx.userId)));
-        updatedTemplateIds.push(template.id);
-      }
+          await tx
+            .update(templates)
+            .set({ exercises, updatedAt: Date.now() })
+            .where(and(eq(templates.id, template.id), eq(templates.userId, ctx.userId)));
+          updatedTemplateIds.push(template.id);
+        }
 
-      return { updatedTemplateIds };
+        return { updatedTemplateIds };
+      });
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const [cycle] = await db
-        .select()
-        .from(programCycles)
-        .where(eq(programCycles.userId, ctx.userId));
-
-      if (cycle && cycle.sequence.includes(input.id)) {
-        const removedBeforeCurrent = cycle.sequence
-          .slice(0, cycle.currentIndex)
-          .filter((id) => id === input.id).length;
-        const nextSequence = cycle.sequence.filter((id) => id !== input.id);
-        const nextIndex =
-          nextSequence.length === 0
-            ? 0
-            : Math.min(cycle.currentIndex - removedBeforeCurrent, nextSequence.length - 1);
-
-        await db
-          .update(programCycles)
-          .set({ sequence: nextSequence, currentIndex: Math.max(0, nextIndex) })
+      await db.transaction(async (tx) => {
+        const [cycle] = await tx
+          .select()
+          .from(programCycles)
           .where(eq(programCycles.userId, ctx.userId));
-      }
 
-      await db
-        .delete(templates)
-        .where(and(eq(templates.id, input.id), eq(templates.userId, ctx.userId)));
+        if (cycle && cycle.sequence.includes(input.id)) {
+          const removedBeforeCurrent = cycle.sequence
+            .slice(0, cycle.currentIndex)
+            .filter((id) => id === input.id).length;
+          const nextSequence = cycle.sequence.filter((id) => id !== input.id);
+          const nextIndex =
+            nextSequence.length === 0
+              ? 0
+              : Math.min(cycle.currentIndex - removedBeforeCurrent, nextSequence.length - 1);
+
+          await tx
+            .update(programCycles)
+            .set({ sequence: nextSequence, currentIndex: Math.max(0, nextIndex) })
+            .where(eq(programCycles.userId, ctx.userId));
+        }
+
+        await tx
+          .delete(templates)
+          .where(and(eq(templates.id, input.id), eq(templates.userId, ctx.userId)));
+      });
 
       return { success: true };
     }),

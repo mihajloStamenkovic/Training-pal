@@ -34,15 +34,19 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
 
   async function addToSequence(templateId: string) {
     const newSeq = [...sequence, templateId];
-    if (cycle) {
-      await updateCycle.mutateAsync({ sequence: newSeq });
-    } else {
-      await upsertCycle.mutateAsync({
-        sequence: newSeq,
-        currentIndex: 0,
-        startDate: todayString(),
-        lastCompletedDate: null,
-      });
+    try {
+      if (cycle) {
+        await updateCycle.mutateAsync({ sequence: newSeq });
+      } else {
+        await upsertCycle.mutateAsync({
+          sequence: newSeq,
+          currentIndex: 0,
+          startDate: todayString(),
+          lastCompletedDate: null,
+        });
+      }
+    } catch {
+      return; // onError has surfaced it; leave the picker open to retry
     }
     setShowPicker(false);
   }
@@ -61,7 +65,7 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
       newIndex = Math.min(index, newSeq.length - 1);
     }
 
-    await updateCycle.mutateAsync({ sequence: newSeq, currentIndex: newIndex });
+    await updateCycle.mutateAsync({ sequence: newSeq, currentIndex: newIndex }).catch(() => {});
   }
 
   async function moveInSequence(from: number, to: number) {
@@ -80,16 +84,20 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
       newIndex = cycle.currentIndex + 1;
     }
 
-    await updateCycle.mutateAsync({ sequence: newSeq, currentIndex: newIndex });
+    await updateCycle.mutateAsync({ sequence: newSeq, currentIndex: newIndex }).catch(() => {});
   }
 
   async function resetCycleTo(index: number) {
     if (!cycle) return;
-    await updateCycle.mutateAsync({
-      currentIndex: index,
-      startDate: todayString(),
-      lastCompletedDate: null,
-    });
+    try {
+      await updateCycle.mutateAsync({
+        currentIndex: index,
+        startDate: todayString(),
+        lastCompletedDate: null,
+      });
+    } catch {
+      return; // onError has surfaced it
+    }
     setShowResetPicker(false);
   }
 

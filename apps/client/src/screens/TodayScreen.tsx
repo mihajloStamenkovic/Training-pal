@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowUpRight,
@@ -38,6 +38,10 @@ export default function TodayScreen() {
   const utils = trpc.useUtils();
   const { showError } = useToast();
   const [isSyncingMissedDays, setIsSyncingMissedDays] = useState(false);
+  // The effect below writes sessions. Its deps include allSessions, which it
+  // then invalidates, so without this it can re-enter before the refetch
+  // lands and post the same skipped days twice.
+  const syncInFlight = useRef(false);
   const [showSkipOptions, setShowSkipOptions] = useState(false);
   const [showSwitchPicker, setShowSwitchPicker] = useState(false);
   const [showDiscardDraft, setShowDiscardDraft] = useState(false);
@@ -60,7 +64,9 @@ export default function TodayScreen() {
     refetch: refetchSessions,
   } = trpc.sessions.list.useQuery();
 
-  const createManySessions = trpc.sessions.createMany.useMutation();
+  const createManySessions = trpc.sessions.createMany.useMutation({
+    onError: () => showError('Failed to record missed days. Please try again.'),
+  });
   const createSession = trpc.sessions.create.useMutation({
     onError: () => showError('Failed to log workout. Please try again.'),
   });
@@ -76,7 +82,9 @@ export default function TodayScreen() {
   const templateMap = new Map(templates?.map((t) => [t.id, t]) ?? []);
   const currentTemplateId = cycle?.sequence?.[cycle.currentIndex];
   const currentTemplate = currentTemplateId ? templateMap.get(currentTemplateId) : null;
-  const draft = loadWorkoutDraft();
+  // Read once. loadWorkoutDraft() parses JSON, so calling it during render
+  // handed the sync effect below a new object identity every render.
+  const [draft, setDraft] = useState(loadWorkoutDraft);
   const today = todayString();
   const draftDate = draft ? getWorkoutDraftDate(draft) : null;
   const resumableDraft =
@@ -97,6 +105,7 @@ export default function TodayScreen() {
     let cancelled = false;
 
     async function syncMissedDays() {
+      if (syncInFlight.current) return;
       if (!cycle || cycle.sequence.length === 0 || !templates || lastHandledDate === undefined) return;
 
       if (
@@ -105,6 +114,7 @@ export default function TodayScreen() {
         (compareDateStrings(draftDate, today) < 0 || draft.templateId !== currentTemplateId)
       ) {
         clearWorkoutDraft();
+        setDraft(null);
       }
 
       const firstUnhandledDate = addDays(lastHandledDate ?? addDays(cycle.startDate, -1), 1);
@@ -112,6 +122,7 @@ export default function TodayScreen() {
         return;
       }
 
+      syncInFlight.current = true;
       if (!cancelled) {
         setIsSyncingMissedDays(true);
       }
@@ -163,17 +174,16 @@ export default function TodayScreen() {
 
       utils.sessions.invalidate();
       utils.cycle.get.invalidate();
-
-      if (!cancelled) {
-        setIsSyncingMissedDays(false);
-      }
     }
 
-    void syncMissedDays().finally(() => {
-      if (!cancelled) {
-        setIsSyncingMissedDays(false);
-      }
-    });
+    syncMissedDays()
+      .catch(() => showError('Could not catch your rotation up on missed days.'))
+      .finally(() => {
+        syncInFlight.current = false;
+        if (!cancelled) {
+          setIsSyncingMissedDays(false);
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -189,22 +199,28 @@ export default function TodayScreen() {
 
   async function handleSkip(advance: boolean) {
     if (!cycle || cycle.sequence.length === 0) return;
-    await createSession.mutateAsync({
-      templateId: cycle.sequence[cycle.currentIndex],
-      templateName: currentTemplate?.name ?? 'Unknown',
-      date: todayString(),
-      status: 'skipped',
-      startedAt: null,
-      finishedAt: null,
-      durationSeconds: null,
-      exerciseData: currentTemplate ? buildSessionExerciseSnapshot(currentTemplate.exercises) : [],
-    });
-    await updateCycle.mutateAsync({
-      currentIndex: advance
-        ? (cycle.currentIndex + 1) % cycle.sequence.length
-        : cycle.currentIndex,
-      lastCompletedDate: todayString(),
-    });
+    try {
+      await createSession.mutateAsync({
+        templateId: cycle.sequence[cycle.currentIndex],
+        templateName: currentTemplate?.name ?? 'Unknown',
+        date: todayString(),
+        status: 'skipped',
+        startedAt: null,
+        finishedAt: null,
+        durationSeconds: null,
+        exerciseData: currentTemplate
+          ? buildSessionExerciseSnapshot(currentTemplate.exercises)
+          : [],
+      });
+      await updateCycle.mutateAsync({
+        currentIndex: advance
+          ? (cycle.currentIndex + 1) % cycle.sequence.length
+          : cycle.currentIndex,
+        lastCompletedDate: todayString(),
+      });
+    } catch {
+      return; // the mutations' onError have already surfaced this
+    }
     utils.sessions.invalidate();
     utils.cycle.get.invalidate();
     setShowSkipOptions(false);
@@ -218,13 +234,19 @@ export default function TodayScreen() {
       return;
     }
     clearWorkoutDraft();
-    await updateCycle.mutateAsync({ currentIndex: index });
+    setDraft(null);
+    try {
+      await updateCycle.mutateAsync({ currentIndex: index });
+    } catch {
+      return; // the mutation's onError has already surfaced this
+    }
     utils.cycle.get.invalidate();
     setShowSwitchPicker(false);
   }
 
   function discardDraft() {
     clearWorkoutDraft();
+    setDraft(null);
     setShowDiscardDraft(false);
   }
 

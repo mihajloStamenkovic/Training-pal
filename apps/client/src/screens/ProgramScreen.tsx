@@ -46,7 +46,11 @@ export default function ProgramScreen() {
 
   async function handleDelete() {
     if (!deleteTarget) return;
-    await deleteTemplate.mutateAsync({ id: deleteTarget });
+    try {
+      await deleteTemplate.mutateAsync({ id: deleteTarget });
+    } catch {
+      return; // onError has surfaced it; keep the dialog open to retry
+    }
     setDeleteTarget(null);
   }
 
@@ -54,10 +58,14 @@ export default function ProgramScreen() {
     const template = templates?.find((item) => item.id === templateId);
     if (!template) return;
 
-    await createTemplate.mutateAsync({
-      name: copyTemplateName(template.name),
-      exercises: cloneExercises(template.exercises),
-    });
+    try {
+      await createTemplate.mutateAsync({
+        name: copyTemplateName(template.name),
+        exercises: cloneExercises(template.exercises),
+      });
+    } catch {
+      // onError has surfaced it
+    }
   }
 
   if (templatesLoading || cycleLoading) return <LoadingSpinner />;

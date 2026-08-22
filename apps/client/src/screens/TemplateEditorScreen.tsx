@@ -117,18 +117,23 @@ export default function TemplateEditorScreen() {
     const validExercises = exercises.filter((e) => e.name.trim() !== '');
     if (validExercises.length === 0) return;
 
-    if (isNew || saveAsCopy) {
-      await createTemplate.mutateAsync({
-        name: saveAsCopy ? copyTemplateName(trimmedName) : trimmedName,
-        exercises: saveAsCopy ? cloneExercises(validExercises) : validExercises,
-      });
-    } else {
-      await updateTemplate.mutateAsync({
-        id: id!,
-        name: trimmedName,
-        exercises: validExercises,
-      });
-      await syncEditedExercises(validExercises);
+    try {
+      if (isNew || saveAsCopy) {
+        await createTemplate.mutateAsync({
+          name: saveAsCopy ? copyTemplateName(trimmedName) : trimmedName,
+          exercises: saveAsCopy ? cloneExercises(validExercises) : validExercises,
+        });
+      } else {
+        await updateTemplate.mutateAsync({
+          id: id!,
+          name: trimmedName,
+          exercises: validExercises,
+        });
+        await syncEditedExercises(validExercises);
+      }
+    } catch {
+      // onError has surfaced it; stay on the form so the edit is not lost.
+      return;
     }
     navigate('/program');
   }
