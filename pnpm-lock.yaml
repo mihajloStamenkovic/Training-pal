@@ -8,9 +8,30 @@ importers:
 
   .:
     devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.5
+        version: 9.39.5
       concurrently:
         specifier: ^9.1.0
         version: 9.2.4
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(supports-color@8.1.1)
+      eslint-plugin-react-hooks:
+        specifier: ^7.1.1
+        version: 7.1.1(eslint@9.39.5(supports-color@8.1.1))(supports-color@8.1.1)
+      eslint-plugin-react-refresh:
+        specifier: ^0.5.3
+        version: 0.5.3(eslint@9.39.5(supports-color@8.1.1))
+      globals:
+        specifier: ^17.7.0
+        version: 17.7.0
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.65.0
+        version: 8.65.0(eslint@9.39.5(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
 
   apps/client:
     dependencies:
@@ -42,9 +63,6 @@ importers:
         specifier: ^7.13.2
         version: 7.18.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
-      '@eslint/js':
-        specifier: ^9.39.4
-        version: 9.39.5
       '@types/node':
         specifier: ^24.12.0
         version: 24.13.3
@@ -57,24 +75,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.0.1
         version: 6.0.3(vite@8.1.5(@types/node@24.13.3)(esbuild@0.28.2)(terser@5.49.0)(tsx@4.23.12))
-      eslint:
-        specifier: ^9.39.4
-        version: 9.39.5(supports-color@8.1.1)
-      eslint-plugin-react-hooks:
-        specifier: ^7.0.1
-        version: 7.1.1(eslint@9.39.5(supports-color@8.1.1))(supports-color@8.1.1)
-      eslint-plugin-react-refresh:
-        specifier: ^0.5.2
-        version: 0.5.3(eslint@9.39.5(supports-color@8.1.1))
-      globals:
-        specifier: ^17.4.0
-        version: 17.7.0
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
-      typescript-eslint:
-        specifier: ^8.57.0
-        version: 8.65.0(eslint@9.39.5(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       vite:
         specifier: ^8.0.1
         version: 8.1.5(@types/node@24.13.3)(esbuild@0.28.2)(terser@5.49.0)(tsx@4.23.12)

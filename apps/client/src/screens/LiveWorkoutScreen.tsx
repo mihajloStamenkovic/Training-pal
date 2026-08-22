@@ -89,7 +89,9 @@ export default function LiveWorkoutScreen() {
   const [completedSets, setCompletedSets] = useState<Map<string, SessionSet[]>>(new Map());
   const [currentSetNum, setCurrentSetNum] = useState(1);
   const [input, setInput] = useState<SetInput>({ ...emptyInput });
-  const [startedAt, setStartedAt] = useState(Date.now());
+  // Lazy initialiser: Date.now() in the argument position would be re-read on
+  // every render, letting the elapsed clock drift off the real start.
+  const [startedAt, setStartedAt] = useState(() => Date.now());
   const [showAbandon, setShowAbandon] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
