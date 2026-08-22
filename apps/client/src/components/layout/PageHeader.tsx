@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import TopNav from './TopNav';
-import { TOP_NAV } from './nav';
 import styles from './PageHeader.module.css';
 
 interface PageHeaderProps {
@@ -15,7 +14,7 @@ export default function PageHeader({ eyebrow }: PageHeaderProps) {
         <span className={styles.dash} />
         <span className={styles.eyebrowText}>{eyebrow}</span>
       </div>
-      {TOP_NAV && <TopNav />}
+      <TopNav />
     </div>
   );
 }

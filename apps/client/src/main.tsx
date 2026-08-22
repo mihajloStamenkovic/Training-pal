@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ClerkProvider } from '@clerk/clerk-react';
 import './styles/theme.css';
-import './styles/animations.css';
 import App from './App';
 import QueryProvider from './lib/QueryProvider';
 import AuthTokenBridge from './lib/AuthTokenBridge';

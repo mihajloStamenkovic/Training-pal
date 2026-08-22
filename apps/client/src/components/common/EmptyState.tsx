@@ -5,10 +5,9 @@ interface EmptyStateProps {
   description?: string;
   /** Numbered "how this works" lines, rendered 01 / 02 / 03. */
   steps?: string[];
-  action?: React.ReactNode;
 }
 
-export default function EmptyState({ title, description, steps, action }: EmptyStateProps) {
+export default function EmptyState({ title, description, steps }: EmptyStateProps) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>{title}</h2>
@@ -26,7 +25,6 @@ export default function EmptyState({ title, description, steps, action }: EmptyS
           </ol>
         </>
       )}
-      {action && <div className={styles.action}>{action}</div>}
     </div>
   );
 }

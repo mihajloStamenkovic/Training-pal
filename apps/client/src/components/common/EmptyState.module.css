@@ -53,11 +53,3 @@
   flex: none;
   padding-top: 3px;
 }
-
-.action {
-  margin-top: 28px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
