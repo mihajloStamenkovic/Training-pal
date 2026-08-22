@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CaretDown, CaretUp, Plus, X } from '@phosphor-icons/react';
 import { trpc } from '../../lib/trpc';
 import { todayString } from '../../utils/dates';
 import type { ProgramCycle, Template } from '../../db/types';
-import Button from '../common/Button';
+import BottomSheet from '../common/BottomSheet';
 import styles from './CycleEditor.module.css';
 
 interface CycleEditorProps {
@@ -93,76 +94,51 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
   return (
     <section className={styles.section}>
       <div className={styles.sectionHead}>
-        <h2 className={styles.sectionTitle}>Rotation</h2>
+        <div className="section-label">Rotation</div>
         {cycle && sequence.length > 0 && (
-          <div className={styles.resetArea}>
-            <button className={styles.resetBtn} onClick={() => setShowResetPicker(!showResetPicker)}>
-              {showResetPicker ? 'Cancel' : `Day ${cycle.currentIndex + 1} of ${sequence.length}`}
-            </button>
-            {showResetPicker && (
-              <div className={styles.resetDropdown}>
-                <p className={styles.resetHint}>Jump the rotation to:</p>
-                {sequence.map((templateId, i) => (
-                  <button
-                    key={`reset-${templateId}-${i}`}
-                    className={`${styles.resetOption} ${cycle.currentIndex === i ? styles.resetOptionCurrent : ''}`}
-                    onClick={() => resetCycleTo(i)}
-                  >
-                    <span className={styles.resetOptionDay}>Day {i + 1}</span>
-                    <span className={styles.resetOptionName}>
-                      {templateMap.get(templateId)?.name ?? 'Deleted Template'}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <button className={styles.jumpBtn} onClick={() => setShowResetPicker(true)}>
+            Jump to day…
+          </button>
         )}
       </div>
 
       {sequence.length > 0 ? (
-        <div className={styles.sequenceList}>
+        <div className={styles.list}>
           {sequence.map((templateId, i) => {
             const tmpl = templateMap.get(templateId);
             const isCurrent = cycle?.currentIndex === i;
             return (
-              <div
-                key={`${templateId}-${i}`}
-                className={`${styles.sequenceItem} ${isCurrent ? styles.current : ''}`}
-              >
-                <span className={styles.dayNum}>{i + 1}</span>
-                <span className={styles.templateName}>{tmpl?.name ?? 'Deleted Template'}</span>
-                {isCurrent && <span className={styles.currentBadge}>Next</span>}
-                <div className={styles.itemActions}>
+              <div key={`${templateId}-${i}`} className={styles.row}>
+                <span className={`${styles.dayNum} ${isCurrent ? styles.dayNumCurrent : ''}`}>
+                  {i + 1}
+                </span>
+                <span className={`${styles.name} ${isCurrent ? '' : styles.nameQuiet}`}>
+                  {tmpl?.name ?? 'Deleted Template'}
+                </span>
+                {isCurrent && <span className={styles.nextBadge}>next</span>}
+                <div className={styles.rowActions}>
                   <button
-                    className={styles.moveBtn}
+                    className={styles.iconBtn}
                     onClick={() => moveInSequence(i, i - 1)}
                     disabled={i === 0}
                     aria-label="Move earlier"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="18 15 12 9 6 15" />
-                    </svg>
+                    <CaretUp size={15} />
                   </button>
                   <button
-                    className={styles.moveBtn}
+                    className={styles.iconBtn}
                     onClick={() => moveInSequence(i, i + 1)}
                     disabled={i === sequence.length - 1}
                     aria-label="Move later"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
+                    <CaretDown size={15} />
                   </button>
                   <button
-                    className={styles.removeBtn}
+                    className={`${styles.iconBtn} ${styles.removeBtn}`}
                     onClick={() => removeFromSequence(i)}
                     aria-label="Remove from rotation"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <X size={15} />
                   </button>
                 </div>
               </div>
@@ -175,9 +151,17 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
         </p>
       )}
 
-      {showPicker ? (
-        <div className={styles.picker}>
-          <p className={styles.pickerLabel}>Add to rotation:</p>
+      <button className={styles.addBtn} onClick={() => setShowPicker(true)}>
+        <Plus size={15} />
+        Add to rotation
+      </button>
+
+      {showPicker && (
+        <BottomSheet
+          title="Add to rotation"
+          hint="Workouts repeat in this order, one per day."
+          onClose={() => setShowPicker(false)}
+        >
           {templates.length === 0 ? (
             <p className={styles.pickerEmpty}>
               No workouts created yet.{' '}
@@ -186,25 +170,46 @@ export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
               </button>
             </p>
           ) : (
-            <div className={styles.pickerList}>
-              {templates.map((t) => (
-                <button key={t.id} className={styles.pickerItem} onClick={() => addToSequence(t.id)}>
-                  {t.name}
-                  <span className={styles.pickerMeta}>
-                    {t.exercises.length} exercise{t.exercises.length !== 1 ? 's' : ''}
-                  </span>
-                </button>
-              ))}
-            </div>
+            templates.map((t) => (
+              <button
+                key={t.id}
+                className={styles.sheetOption}
+                onClick={() => addToSequence(t.id)}
+              >
+                <span className={styles.sheetName}>{t.name}</span>
+                <span className={styles.sheetMeta}>
+                  {t.exercises.length} exercise{t.exercises.length !== 1 ? 's' : ''}
+                </span>
+              </button>
+            ))
           )}
-          <Button variant="ghost" fullWidth onClick={() => setShowPicker(false)}>
-            Cancel
-          </Button>
-        </div>
-      ) : (
-        <button className={styles.addBtn} onClick={() => setShowPicker(true)}>
-          + Add to Rotation
-        </button>
+        </BottomSheet>
+      )}
+
+      {showResetPicker && cycle && (
+        <BottomSheet
+          title="Jump the rotation to"
+          hint="This resets the rotation start to today."
+          onClose={() => setShowResetPicker(false)}
+        >
+          {sequence.map((templateId, i) => (
+            <button
+              key={`reset-${templateId}-${i}`}
+              className={styles.sheetOption}
+              onClick={() => resetCycleTo(i)}
+            >
+              <span
+                className={`${styles.sheetDay} ${cycle.currentIndex === i ? styles.sheetDayCurrent : ''}`}
+              >
+                {i + 1}
+              </span>
+              <span className={styles.sheetName}>
+                {templateMap.get(templateId)?.name ?? 'Deleted Template'}
+              </span>
+              {cycle.currentIndex === i && <span className={styles.sheetBadge}>current</span>}
+            </button>
+          ))}
+        </BottomSheet>
       )}
     </section>
   );

@@ -1,36 +1,51 @@
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #141419;
-  --bg-tertiary: #1e1e26;
-  --bg-input: #1a1a22;
-  --text-primary: #f0f0f5;
-  --text-secondary: #8a8a9a;
-  --text-muted: #5a5a6a;
-  --accent: #22c55e;
-  --accent-hover: #16a34a;
-  --accent-warning: #eab308;
-  --accent-danger: #ef4444;
-  --accent-danger-hover: #dc2626;
-  --accent-blue: #3b82f6;
-  --border: #2a2a35;
-  --border-focus: #22c55e;
+  /* ─── Nocturne ─────────────────────────────────────────────────
+     One ground, no second surface. Hierarchy comes from size and
+     space; the accent is a line and a glow, never a flood. */
+  --bg-primary: #161826;
+  --bg-secondary: #161826;
+  --bg-tertiary: #1b1d2c;
+  --bg-input: transparent;
+  --text-primary: #e9e9ed;
+  --text-secondary: rgba(233, 233, 237, 0.55);
+  --text-muted: rgba(233, 233, 237, 0.45);
+  --accent: #9184d9;
+  /* A tint, not a darker fill — the accent never becomes a background. */
+  --accent-hover: rgba(145, 132, 217, 0.12);
+  --accent-warning: #d9c184;
+  --accent-danger: #d98484;
+  --accent-danger-hover: rgba(217, 132, 132, 0.12);
+  --accent-blue: #84a4d9;
+  --border: rgba(233, 233, 237, 0.16);
+  --border-focus: #9184d9;
+
+  --hairline: rgba(233, 233, 237, 0.09);
+  --accent-tint: rgba(145, 132, 217, 0.14);
+  --accent-text-on-tint: #d2cefd;
+  --accent-glow: 0 0 8px rgba(145, 132, 217, 0.8);
+  --neutral-hover: rgba(233, 233, 237, 0.07);
+  --scrim: rgba(10, 11, 18, 0.6);
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
-  --tab-bar-height: 62px;
-  /* How far the floating tab bar sits off the bottom edge. The safe-area inset
-     already reserves room for the home indicator, so only part of it is added
-     back — otherwise the bar floats far too high on iPhones. */
-  --tab-bar-offset: calc(4px + var(--safe-bottom) * 0.4);
+  /* The nav moved to the top of each page, so nothing is reserved at the
+     bottom for it any more. The variable stays at 0 because AppLayout and
+     several screens still reference --tab-bar-inset. */
+  --tab-bar-height: 0px;
+  --tab-bar-offset: 0px;
   --tab-bar-inset: calc(var(--tab-bar-height) + var(--tab-bar-offset));
   --header-height: 52px;
-  --radius: 14px;
-  --radius-sm: 10px;
-  --radius-lg: 20px;
+  --radius: 8px;
+  --radius-sm: 8px;
+  --radius-lg: 8px;
+  --sheet-radius: 20px 20px 34px 34px;
   --content-max: 560px;
+
+  /* Height reserved under a page for its fixed action pad. */
+  --action-pad-inset: calc(88px + var(--safe-bottom));
 }
 
 * {
@@ -41,14 +56,14 @@
 }
 
 html {
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
 }
 
 html, body, #root {
   min-height: 100%;
   min-height: 100dvh;
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
@@ -58,21 +73,27 @@ body, #root {
   background: var(--bg-primary);
 }
 
+/* Inputs are underlined, not filled. */
 input, select, textarea {
   font-family: inherit;
   font-size: 16px;
   color: var(--text-primary);
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 0 0 9px;
   outline: none;
   width: 100%;
   transition: border-color 0.15s;
 }
 
 input:focus, select:focus, textarea:focus {
-  border-color: var(--border-focus);
+  border-bottom-color: var(--border-focus);
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(233, 233, 237, 0.3);
 }
 
 input[type="number"] {
@@ -91,10 +112,10 @@ button {
   cursor: pointer;
   border: none;
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 500;
   min-height: 44px;
   touch-action: manipulation;
-  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s, opacity 0.15s;
 }
 
 button:active {
@@ -107,6 +128,11 @@ button:disabled {
   transform: none;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 a {
   color: var(--accent);
   text-decoration: none;
@@ -117,17 +143,67 @@ a {
 }
 
 .page {
-  padding: 16px calc(16px + var(--safe-right)) 0 calc(16px + var(--safe-left));
-  padding-top: calc(var(--safe-top) + 16px);
-  padding-bottom: calc(var(--tab-bar-inset) + 28px);
+  padding: 0 calc(20px + var(--safe-right)) 0 calc(20px + var(--safe-left));
+  padding-top: calc(var(--safe-top) + 14px);
+  padding-bottom: var(--action-pad-inset);
   min-height: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
 }
 
+/* Pages with no fixed action pad don't need the reserved strip. */
+.page-flush {
+  padding-bottom: calc(28px + var(--safe-bottom));
+}
+
 .page-title {
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 20px;
+  font-size: 42px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  margin: 12px 0 0;
+}
+
+/* Nocturne's signature: a rule that fades out before it reaches the edge. */
+.rule {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border) 40px,
+    var(--border) calc(100% - 40px),
+    transparent
+  );
+}
+
+/* Small uppercase label that opens a section. */
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* The primary action always lives in a pad fixed to the bottom edge, with the
+   ground fading up behind it so scrolled content slides away rather than
+   colliding with the buttons. */
+.action-pad {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  padding: 14px calc(20px + var(--safe-right)) calc(22px + var(--safe-bottom))
+    calc(20px + var(--safe-left));
+  background: linear-gradient(to top, var(--bg-primary) 55%, rgba(22, 24, 38, 0));
+  pointer-events: none;
+}
+
+.action-pad-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: flex;
+  gap: 9px;
+  pointer-events: auto;
 }

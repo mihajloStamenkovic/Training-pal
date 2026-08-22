@@ -1,16 +1,42 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  ArrowUpRight,
+  ArrowsLeftRight,
+  CheckCircle,
+  DotsThree,
+  ListChecks,
+  Play,
+  Plus,
+} from '@phosphor-icons/react';
 import { trpc } from '../lib/trpc';
 import { addDays, compareDateStrings, todayString, formatDate, formatDuration } from '../utils/dates';
 import { clearWorkoutDraft, getWorkoutDraftDate, loadWorkoutDraft } from '../utils/workoutDraft';
 import { buildSessionExerciseSnapshot, isHandledSession } from '../utils/sessions';
-import type { Session } from '../db/types';
+import {
+  exerciseMeta,
+  formatNumber,
+  formatTonnes,
+  heaviestSet,
+  plannedStats,
+  rowFigure,
+  sessionStats,
+} from '../utils/workoutStats';
+import type { Session, StrengthSet } from '../db/types';
 import Button from '../components/common/Button';
 import EmptyState from '../components/common/EmptyState';
+import BottomSheet from '../components/common/BottomSheet';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
+import PageHeader from '../components/layout/PageHeader';
 import styles from './TodayScreen.module.css';
+
+/** The heaviest target set of a strength exercise, as a SessionSet shape. */
+function heaviestTargetWeight(sets: { weight: number; reps: number; rir: number }[]): number | null {
+  const best = heaviestSet(sets.map((s, i) => ({ setNumber: i + 1, ...s })));
+  return best ? best.weight : null;
+}
 
 export default function TodayScreen() {
   const navigate = useNavigate();
@@ -227,7 +253,7 @@ export default function TodayScreen() {
     const hasTemplates = (templates?.length ?? 0) > 0;
     return (
       <div className="page">
-        <h1 className="page-title">Today</h1>
+        <PageHeader eyebrow={formatDate(today)} />
         <EmptyState
           title={hasTemplates ? 'No rotation yet' : 'No workouts yet'}
           description={
@@ -235,25 +261,32 @@ export default function TodayScreen() {
               ? 'Add your templates to a rotation and they will repeat in order.'
               : 'Build your first workout, then add it to your rotation.'
           }
-          action={
-            <div className={styles.emptyActions}>
-              {hasTemplates ? (
-                <>
-                  <Button fullWidth onClick={() => navigate('/program')}>
-                    Build Rotation
-                  </Button>
-                  <Button variant="secondary" fullWidth onClick={() => navigate('/program/new')}>
-                    + New Workout
-                  </Button>
-                </>
-              ) : (
-                <Button fullWidth onClick={() => navigate('/program/new')}>
-                  + Create Your First Workout
-                </Button>
-              )}
-            </div>
-          }
+          steps={[
+            'Create a workout with its exercises and target sets',
+            'Add it to the rotation, in the order you train',
+            'Come back here and hit Start',
+          ]}
         />
+        <div className="action-pad">
+          <div className="action-pad-inner">
+            {hasTemplates ? (
+              <>
+                <Button variant="secondary" fullWidth onClick={() => navigate('/program/new')}>
+                  <Plus size={16} />
+                  New workout
+                </Button>
+                <Button fullWidth onClick={() => navigate('/program')}>
+                  Build rotation
+                </Button>
+              </>
+            ) : (
+              <Button fullWidth lead onClick={() => navigate('/program/new')}>
+                <Plus size={17} />
+                Create your first workout
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -262,158 +295,302 @@ export default function TodayScreen() {
   if (doneToday) {
     const nextTemplateId = cycle.sequence[cycle.currentIndex];
     const nextTemplate = templateMap.get(nextTemplateId);
+    const outcomeExercises = todayOutcome?.exerciseData ?? [];
+    const done = sessionStats(outcomeExercises);
+    // "Progressed" compares today's heaviest set against the last time this
+    // same workout was completed, which is the next entry down the date-desc
+    // list.
+    const previous = allSessions?.find(
+      (s) =>
+        s.templateId === todayOutcome?.templateId &&
+        s.status === 'completed' &&
+        s.id !== todayOutcome?.id &&
+        compareDateStrings(s.date, todayOutcome?.date ?? today) < 0,
+    );
+    const previousBest = new Map(
+      (previous?.exerciseData ?? [])
+        .filter((ex) => ex.type === 'strength')
+        .map((ex) => [ex.exerciseName, heaviestSet(ex.sets as StrengthSet[])?.weight ?? null]),
+    );
+
+    const liftRows = outcomeExercises
+      .filter((ex) => ex.type === 'strength' && ex.sets.length > 0)
+      .map((ex) => {
+        const best = heaviestSet(ex.sets as StrengthSet[]);
+        const before = previousBest.get(ex.exerciseName) ?? null;
+        const delta = best && before !== null ? best.weight - before : 0;
+        return { name: ex.exerciseName, weight: best?.weight ?? 0, delta };
+      });
+    const progressed = liftRows.filter((row) => row.delta > 0).length;
+
     return (
       <div className="page">
-        <h1 className="page-title">Today</h1>
-        <div className={styles.doneCard}>
-          <div className={styles.checkIcon}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
-            </svg>
+        <PageHeader
+          eyebrow={`${formatDate(today)} · ${todayOutcome?.status === 'skipped' ? 'skipped' : 'done'}`}
+        />
+
+        <div className={styles.doneFlag}>
+          <CheckCircle size={15} />
+          {todayOutcome?.status === 'skipped'
+            ? `${todayOutcome.templateName} skipped`
+            : `${todayOutcome?.templateName ?? 'Workout'} logged`}
+        </div>
+
+        {todayOutcome?.status === 'completed' && (
+          <>
+            <div className={styles.tonnage}>
+              <span className={styles.tonnageValue}>{formatTonnes(done.tonnes)}</span>
+              <span className={styles.tonnageUnit}>tonnes moved</span>
+            </div>
+
+            <div className={`${styles.statStrip} ${styles.doneStats}`}>
+              <div>
+                <div className={styles.statValue}>{done.sets}</div>
+                <div className={styles.statLabel}>sets</div>
+              </div>
+              <div className={styles.statDivider} />
+              <div>
+                <div className={styles.statValue}>
+                  {Math.round((todayOutcome.durationSeconds ?? 0) / 60)}
+                  <span className={styles.statUnit}>m</span>
+                </div>
+                <div className={styles.statLabel}>duration</div>
+              </div>
+              <div className={styles.statDivider} />
+              <div>
+                <div className={`${styles.statValue} ${styles.statAccent}`}>+{progressed}</div>
+                <div className={styles.statLabel}>progressed</div>
+              </div>
+            </div>
+
+            <div className={`rule ${styles.doneRule}`} />
+
+            <div className={styles.rows}>
+              {liftRows.map((row) => (
+                <div key={row.name} className={styles.row}>
+                  <span className={styles.rowMain}>
+                    <span className={styles.rowName}>{row.name}</span>
+                  </span>
+                  <span className={styles.rowFigure}>
+                    {formatNumber(row.weight)}
+                    <span className={styles.rowUnit}>kg</span>
+                  </span>
+                  <span className={`${styles.rowDelta} ${row.delta > 0 ? styles.rowDeltaUp : ''}`}>
+                    {row.delta > 0 ? `+${formatNumber(row.delta)}` : 'held'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className={styles.nextUp}>next up · {nextTemplate?.name ?? 'Unknown'}</div>
+        <div className={styles.nextUpMeta}>
+          Day {cycle.currentIndex + 1} of {cycle.sequence.length} — whenever you are back in.
+        </div>
+
+        <div className="action-pad">
+          <div className="action-pad-inner">
+            <Button variant="secondary" fullWidth onClick={() => navigate('/program')}>
+              <ListChecks size={17} />
+              Program
+            </Button>
+            <Button fullWidth onClick={() => navigate('/workout')}>
+              <Play size={16} />
+              Train again
+            </Button>
           </div>
-          <h2 className={styles.doneTitle}>
-            {todayOutcome?.status === 'skipped' ? 'Today is handled' : "You're done for today"}
-          </h2>
-          {todayOutcome && (
-            <p className={styles.doneMeta}>
-              {todayOutcome.status === 'completed'
-                ? `Completed ${todayOutcome.templateName}${todayOutcome.durationSeconds ? ` in ${formatDuration(todayOutcome.durationSeconds)}` : ''}`
-                : `Skipped ${todayOutcome.templateName}`}
-            </p>
-          )}
-          <p className={styles.doneNext}>
-            Next up: <strong>{nextTemplate?.name ?? 'Unknown'}</strong>
-          </p>
         </div>
       </div>
     );
   }
 
   // Show today's workout
+  const exercises = currentTemplate?.exercises ?? [];
+  const planned = plannedStats(exercises);
+
+  // The one line of coaching Today gets: the first lift whose target has moved
+  // up since the last time this workout ran.
+  const lastBest = new Map(
+    (lastSession?.exerciseData ?? [])
+      .filter((ex) => ex.type === 'strength')
+      .map((ex) => [ex.exerciseId, heaviestSet(ex.sets as StrengthSet[])?.weight ?? null]),
+  );
+  let movedUpName: string | null = null;
+  let movedUpDelta = 0;
+  for (const ex of exercises) {
+    if (ex.type !== 'strength') continue;
+    const before = lastBest.get(ex.id);
+    if (before == null) continue;
+    const target = heaviestTargetWeight(ex.sets);
+    if (target !== null && target > before) {
+      movedUpName = ex.name;
+      movedUpDelta = target - before;
+      break;
+    }
+  }
+
   return (
     <div className="page">
-      <h1 className="page-title">Today</h1>
+      <PageHeader
+        eyebrow={`${formatDate(today)} · day ${cycle.currentIndex + 1} of ${cycle.sequence.length}`}
+      />
 
-      <div className={styles.workoutCard}>
-        <div className={styles.workoutHead}>
-          <h2 className={styles.workoutName}>{currentTemplate?.name ?? 'Unknown'}</h2>
-          {cycle.sequence.length > 1 && (
-            <button
-              className={styles.changeBtn}
-              onClick={() => setShowSwitchPicker((open) => !open)}
-            >
-              {showSwitchPicker ? 'Close' : 'Change'}
-            </button>
-          )}
+      <h1 className="page-title">{currentTemplate?.name ?? 'Unknown'}</h1>
+
+      <div className={styles.statStrip}>
+        <div>
+          <div className={styles.statValue}>{planned.sets}</div>
+          <div className={styles.statLabel}>sets</div>
         </div>
-
-        {showSwitchPicker && (
-          <div className={styles.switchPicker}>
-            <p className={styles.switchLabel}>Do this instead today</p>
-            {cycle.sequence.map((templateId, i) => {
-              const tmpl = templateMap.get(templateId);
-              const isCurrent = i === cycle.currentIndex;
-              return (
-                <button
-                  key={`switch-${templateId}-${i}`}
-                  className={`${styles.switchOption} ${isCurrent ? styles.switchOptionCurrent : ''}`}
-                  onClick={() => switchToDay(i)}
-                >
-                  <span className={styles.switchDay}>Day {i + 1}</span>
-                  <span className={styles.switchName}>{tmpl?.name ?? 'Deleted Template'}</span>
-                  {isCurrent && <span className={styles.switchBadge}>Today</span>}
-                </button>
-              );
-            })}
-            <p className={styles.switchHint}>
-              The rotation carries on from whichever workout you pick.
-            </p>
+        <div className={styles.statDivider} />
+        <div>
+          <div className={styles.statValue}>
+            {formatTonnes(planned.tonnes)}
+            <span className={styles.statUnit}>t</span>
           </div>
-        )}
-
-        {resumableDraft && (
-          <div className={styles.resumeBanner}>
-            <span className={styles.resumeTitle}>Workout in progress</span>
-            <span className={styles.resumeMeta}>Pick up where you left off.</span>
+          <div className={styles.statLabel}>volume</div>
+        </div>
+        <div className={styles.statDivider} />
+        <div>
+          <div className={styles.statValue}>
+            ~{planned.minutes}
+            <span className={styles.statUnit}>m</span>
           </div>
-        )}
-        <p className={styles.workoutMeta}>
-          {currentTemplate?.exercises.length ?? 0} exercise
-          {(currentTemplate?.exercises.length ?? 0) !== 1 ? 's' : ''}
-          {' · '}Day {cycle.currentIndex + 1} of {cycle.sequence.length}
-        </p>
-
-        {currentTemplate && (
-          <div className={styles.exercisePreview}>
-            {currentTemplate.exercises.map((ex, i) => (
-              <div key={ex.id} className={styles.previewRow}>
-                <span className={styles.previewNum}>{i + 1}</span>
-                <span className={styles.previewName}>{ex.name}</span>
-                <span className={styles.previewDetail}>
-                  {ex.type === 'strength'
-                    ? `${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''}`
-                    : `${ex.durationMinutes}min`}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {lastSession && (
-          <div className={styles.lastSession}>
-            <span className={styles.lastLabel}>Last session</span>
-            <span className={styles.lastDate}>{formatDate(lastSession.date)}</span>
-            {lastSession.durationSeconds && (
-              <span className={styles.lastDuration}>
-                {formatDuration(lastSession.durationSeconds)}
-              </span>
-            )}
-          </div>
-        )}
+          <div className={styles.statLabel}>est.</div>
+        </div>
       </div>
 
-      <div className={styles.actions}>
-        {resumableDraft ? (
-          <>
-            <Button fullWidth onClick={() => navigate('/workout')}>
-              Resume Workout
+      <div className={`rule ${styles.heroRule}`} />
+
+      <div className={styles.rows}>
+        {exercises.map((ex) => {
+          const figure = rowFigure(ex);
+          return (
+            <div key={ex.id} className={styles.row}>
+              <span className={styles.rowMain}>
+                <span className={styles.rowName}>{ex.name}</span>
+                <span className={styles.rowMeta}>{exerciseMeta(ex)}</span>
+              </span>
+              <span className={styles.rowFigure}>
+                {figure.value}
+                <span className={styles.rowUnit}>{figure.unit}</span>
+              </span>
+              <span className={styles.rowTrailing}>{figure.trailing}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {resumableDraft ? (
+        <div className={styles.resumeNote}>Workout in progress</div>
+      ) : movedUpName ? (
+        <div className={styles.note}>
+          <ArrowUpRight size={13} className={styles.noteIcon} />
+          {movedUpName} up {formatNumber(movedUpDelta)}kg on last time
+        </div>
+      ) : lastSession ? (
+        <div className={styles.note}>
+          Last time {formatDate(lastSession.date)}
+          {lastSession.durationSeconds ? ` · ${formatDuration(lastSession.durationSeconds)}` : ''}
+        </div>
+      ) : null}
+
+      <div className="action-pad">
+        <div className="action-pad-inner">
+          <Button fullWidth onClick={() => navigate('/workout')}>
+            <Play size={17} />
+            {resumableDraft ? 'Resume' : 'Start'}
+          </Button>
+          {cycle.sequence.length > 1 && (
+            <Button
+              variant="secondary"
+              className={styles.iconAction}
+              aria-label="Train something else today"
+              onClick={() => setShowSwitchPicker(true)}
+            >
+              <ArrowsLeftRight size={18} />
             </Button>
-            <Button variant="secondary" fullWidth onClick={() => setShowDiscardDraft(true)}>
-              Discard In-Progress Workout
+          )}
+          <Button
+            variant="secondary"
+            className={styles.iconAction}
+            aria-label="More options"
+            onClick={() => setShowSkipOptions(true)}
+          >
+            <DotsThree size={18} />
+          </Button>
+        </div>
+      </div>
+
+      {showSwitchPicker && (
+        <BottomSheet
+          title="Train something else today"
+          hint={`Swapping today does not move your rotation — ${currentTemplate?.name ?? 'this workout'} stays next.`}
+          onClose={() => setShowSwitchPicker(false)}
+        >
+          {cycle.sequence.map((templateId, i) => {
+            const tmpl = templateMap.get(templateId);
+            const isCurrent = i === cycle.currentIndex;
+            return (
+              <button
+                key={`switch-${templateId}-${i}`}
+                className={styles.sheetOption}
+                onClick={() => switchToDay(i)}
+              >
+                <span className={`${styles.sheetDay} ${isCurrent ? styles.sheetDayCurrent : ''}`}>
+                  {i + 1}
+                </span>
+                <span className={styles.sheetName}>{tmpl?.name ?? 'Deleted Template'}</span>
+                {isCurrent ? (
+                  <span className={styles.sheetBadge}>scheduled</span>
+                ) : (
+                  <span className={styles.sheetMeta}>
+                    {tmpl?.exercises.length ?? 0} exercise
+                    {(tmpl?.exercises.length ?? 0) !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </BottomSheet>
+      )}
+
+      {showSkipOptions && (
+        <BottomSheet
+          title="Not training today"
+          hint="Skipping logs the day so your rotation stays in step with the calendar."
+          onClose={() => setShowSkipOptions(false)}
+        >
+          <div className={styles.sheetActions}>
+            <Button variant="secondary" fullWidth onClick={() => handleSkip(true)}>
+              Skip and advance
             </Button>
-          </>
-        ) : (
-          <>
-            <Button fullWidth onClick={() => navigate('/workout')}>
-              Start Workout
+            <Button variant="secondary" fullWidth onClick={() => handleSkip(false)}>
+              Skip, keep this workout next
             </Button>
-            {showSkipOptions ? (
-              <div className={styles.skipOptions}>
-                <Button variant="secondary" fullWidth onClick={() => handleSkip(true)}>
-                  Skip And Advance
-                </Button>
-                <Button variant="secondary" fullWidth onClick={() => handleSkip(false)}>
-                  Skip, Keep This Workout Next
-                </Button>
-                <Button variant="ghost" fullWidth onClick={() => setShowSkipOptions(false)}>
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <Button variant="secondary" fullWidth onClick={() => setShowSkipOptions(true)}>
-                Skip Options
+            {resumableDraft && (
+              <Button
+                variant="danger"
+                fullWidth
+                onClick={() => {
+                  setShowSkipOptions(false);
+                  setShowDiscardDraft(true);
+                }}
+              >
+                Discard in-progress workout
               </Button>
             )}
-          </>
-        )}
-      </div>
+          </div>
+        </BottomSheet>
+      )}
 
       {showDiscardDraft && (
         <ConfirmDialog
-          title="Discard Workout?"
+          title="Discard workout?"
           message="This will remove your in-progress workout so you can start fresh."
           confirmLabel="Discard"
+          cancelLabel="Keep it"
           danger
           onConfirm={discardDraft}
           onCancel={() => setShowDiscardDraft(false)}

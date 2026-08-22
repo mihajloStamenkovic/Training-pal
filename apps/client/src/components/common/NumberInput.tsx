@@ -6,6 +6,8 @@ interface NumberInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   value: number | string;
   onChange: (value: string) => void;
   decimal?: boolean;
+  /** Renders the value at display size with no underline — the live logger. */
+  display?: boolean;
 }
 
 export default function NumberInput({
@@ -13,6 +15,7 @@ export default function NumberInput({
   value,
   onChange,
   decimal = false,
+  display = false,
   className = '',
   ...props
 }: NumberInputProps) {
@@ -58,7 +61,7 @@ export default function NumberInput({
   }
 
   return (
-    <div className={`${styles.wrapper} ${className}`}>
+    <div className={`${styles.wrapper} ${display ? styles.displayWrapper : ''} ${className}`}>
       {label && <label className={styles.label}>{label}</label>}
       <input
         type="text"
@@ -73,7 +76,7 @@ export default function NumberInput({
           setIsFocused(false);
           setRawValue(null);
         }}
-        className={styles.input}
+        className={display ? styles.display : styles.input}
         {...props}
       />
     </div>

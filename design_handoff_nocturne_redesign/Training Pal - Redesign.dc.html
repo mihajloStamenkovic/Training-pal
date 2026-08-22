@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#e8e8ea;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#5d5294;text-decoration:none}
+a:hover{color:#796cbf}
+@keyframes tp-sweep{to{stroke-dashoffset:0}}
+@keyframes tp-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+</style>
+</helmet>
+
+<section style="padding:44px 48px 64px;border-bottom:1px solid rgba(0,0,0,.08)">
+<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+<span style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">2</span>
+<span style="font:600 13px system-ui,sans-serif;color:#1a1a1a">The whole app in 1b, with 1c's rest timer</span>
+</div>
+<p style="margin:0 0 26px;max-width:680px;font:400 13px/1.6 system-ui,sans-serif;color:#5c5c66">Every route in the app — Today (live, empty, finished), the live logger, rest, Program, the workout editor, Settings, Sign in — on <a href="#1b">1b</a>'s rules: no cards, hairlines that fade at their ends, the number you're chasing set larger than anything else, nav as three muted icons on the top row so the bottom 200px stays a thumb pad. Rest borrows the countdown ring from <a href="#1c">1c</a>.</p>
+
+<div id="2a" style="display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)">
+<a href="#2a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">2a</a>
+Nine screens, one system. Primary action always outlined blurple, always ≥52px, always in the bottom pad.
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:18px">
+
+<!-- ─── Today ─── -->
+<div data-screen-label="Today" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>Fri 21 Aug · day 1 of 3
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-target" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-list-checks" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<h1 style="margin:12px 0 0;font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.02">Upper A</h1>
+<div style="display:flex;align-items:baseline;gap:16px;margin-top:10px;font-variant-numeric:tabular-nums">
+<div><div style="font-size:23px;font-weight:500">14</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">sets</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500">4.1<span style="font-size:13px;color:rgba(233,233,237,.55)">t</span></div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">volume</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500">~58<span style="font-size:13px;color:rgba(233,233,237,.55)">m</span></div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">est.</div></div>
+</div>
+<div style="height:1px;margin:20px 0 4px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Bench Press</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 2 · rest 3:00</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">60<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×8</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Incline DB Press</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 2 · rest 3:00</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">26<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×10</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Lat Pulldown</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 1 · rest 2:30</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">55<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×10</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Cable Row</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 1 · rest 2:30</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">50<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×12</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Treadmill</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">incline 6 · speed 5.5</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">12<span style="font-size:12px;color:rgba(233,233,237,.45)">min</span></span>
+<span style="width:26px"></span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11.5px;color:rgba(233,233,237,.45)">
+<i class="ph ph-arrow-up-right" style="font-size:13px;color:#9184d9"></i>Bench up 2.5kg on last time
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<div style="display:flex;gap:9px">
+<button style="flex:1;min-height:52px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-play" style="font-size:17px"></i>Start</button>
+<button style="width:52px;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-arrows-left-right" style="font-size:18px"></i></button>
+<button style="width:52px;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-dots-three" style="font-size:18px"></i></button>
+</div>
+</div>
+</div>
+
+<!-- ─── Today · switch picker ─── -->
+<div data-screen-label="Today · switch" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0;filter:saturate(.7);opacity:.35">
+<div style="display:flex;align-items:center;gap:9px;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)"><span style="width:14px;height:1px;background:#9184d9"></span>Fri 21 Aug · day 1 of 3</div>
+<h1 style="margin:12px 0 0;font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.02">Upper A</h1>
+<div style="height:1px;margin:26px 0;background:rgba(233,233,237,.16)"></div>
+<div style="display:flex;flex-direction:column;gap:26px">
+<div style="height:1px;background:rgba(233,233,237,.09)"></div>
+<div style="height:1px;background:rgba(233,233,237,.09)"></div>
+<div style="height:1px;background:rgba(233,233,237,.09)"></div>
+</div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(10,11,18,.55)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:22px 20px 24px;background:#1b1d2c;border-top:1px solid rgba(233,233,237,.12);border-radius:20px 20px 34px 34px;box-shadow:0 -20px 44px -20px rgba(0,0,0,.7)">
+<div style="display:flex;align-items:baseline;gap:10px">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55);flex:1">Train something else today</div>
+<button style="background:transparent;border:none;color:rgba(233,233,237,.55);font:500 12px 'Inter';cursor:pointer;padding:0">Cancel</button>
+</div>
+<div style="margin-top:14px;display:flex;flex-direction:column">
+<button style="display:flex;align-items:baseline;gap:12px;padding:15px 0;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.09);color:#e9e9ed;text-align:left;cursor:pointer;font-family:'Inter'" style-hover="background:rgba(233,233,237,.04)">
+<span style="width:20px;font-size:11px;color:#9184d9;font-variant-numeric:tabular-nums">1</span>
+<span style="flex:1;font-size:16px;font-weight:500">Upper A</span>
+<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9184d9">scheduled</span>
+</button>
+<button style="display:flex;align-items:baseline;gap:12px;padding:15px 0;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.09);color:#e9e9ed;text-align:left;cursor:pointer;font-family:'Inter'" style-hover="background:rgba(233,233,237,.04)">
+<span style="width:20px;font-size:11px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">2</span>
+<span style="flex:1;font-size:16px;font-weight:500">Lower A</span>
+<span style="font-size:11.5px;color:rgba(233,233,237,.45)">6 exercises</span>
+</button>
+<button style="display:flex;align-items:baseline;gap:12px;padding:15px 0;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.09);color:#e9e9ed;text-align:left;cursor:pointer;font-family:'Inter'" style-hover="background:rgba(233,233,237,.04)">
+<span style="width:20px;font-size:11px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">3</span>
+<span style="flex:1;font-size:16px;font-weight:500">Upper B</span>
+<span style="font-size:11.5px;color:rgba(233,233,237,.45)">5 exercises</span>
+</button>
+<button style="display:flex;align-items:baseline;gap:12px;padding:15px 0;background:transparent;border:none;color:rgba(233,233,237,.55);text-align:left;cursor:pointer;font-family:'Inter'" style-hover="background:rgba(233,233,237,.04)">
+<span style="width:20px"></span>
+<span style="flex:1;font-size:16px;font-weight:500">Full Body (light)</span>
+<span style="font-size:11.5px">4 exercises</span>
+</button>
+</div>
+<div style="font-size:11.5px;color:rgba(233,233,237,.45);margin-top:14px">Swapping today doesn't move your rotation — Upper A stays next.</div>
+</div>
+</div>
+
+<!-- ─── Live workout ─── -->
+<div data-screen-label="Live workout" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:10px;font:500 11px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:.06em;color:rgba(233,233,237,.45)">
+24:07<span style="flex:1;height:1px;background:rgba(233,233,237,.14)"></span>2 / 5
+<button style="width:30px;height:30px;margin-left:2px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.45);display:inline-flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-x" style="font-size:16px"></i></button>
+</div>
+<h1 style="margin:16px 0 3px;font-size:25px;font-weight:500;letter-spacing:-.015em">Incline DB Press</h1>
+<div style="font-size:12px;color:rgba(233,233,237,.45)">set 2 of 3 · last time 26kg × 9 @ RIR 1</div>
+<div style="display:flex;align-items:flex-end;gap:6px;margin-top:26px">
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">26</span>
+<span style="font-size:17px;color:rgba(233,233,237,.45);padding-bottom:9px">kg</span>
+<span style="margin:0 8px 12px;width:1px;height:44px;background:rgba(233,233,237,.16)"></span>
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">10</span>
+<span style="font-size:17px;color:rgba(233,233,237,.45);padding-bottom:9px">reps</span>
+</div>
+<div style="display:flex;gap:9px;margin-top:20px">
+<div style="flex:1;display:flex;gap:7px">
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+</div>
+<div style="width:1px;background:rgba(233,233,237,.1)"></div>
+<div style="flex:1;display:flex;gap:7px">
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="flex:1">step 1.0 kg</span><span style="flex:1;text-align:right">reps</span>
+</div>
+<div style="margin-top:22px">
+<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-bottom:8px">Reps in reserve</div>
+<div style="display:flex;gap:7px">
+<button style="flex:1;height:50px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">0<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">failure</span></button>
+<button style="flex:1;height:50px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">1<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">hard</span></button>
+<button style="flex:1;height:50px;border-radius:8px;background:rgba(145,132,217,.14);border:1px solid #9184d9;color:#d2cefd;font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer">2<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">solid</span></button>
+</div>
+</div>
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(233,233,237,.09);font-size:13px">
+<i class="ph ph-check" style="font-size:14px;color:#9184d9"></i><span style="color:rgba(233,233,237,.45);min-width:34px">Set 1</span><span style="font-variant-numeric:tabular-nums">26 × 10</span><span style="margin-left:auto;font-size:11.5px;color:rgba(233,233,237,.45)">RIR 2</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(233,233,237,.09);font-size:13px;color:rgba(233,233,237,.55)">
+<i class="ph ph-minus" style="font-size:14px"></i><span style="min-width:34px">Set 3</span><span style="font-variant-numeric:tabular-nums">26 × 10</span><span style="margin-left:auto;font-size:11.5px">planned</span>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-check" style="font-size:18px"></i>Log set 2 of 3</button>
+</div>
+</div>
+
+<!-- ─── Rest (1c ring) ─── -->
+<div data-screen-label="Rest" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;font:500 11px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:.06em;color:rgba(233,233,237,.45)">
+24:07<span style="flex:1;height:1px;background:rgba(233,233,237,.14)"></span>2 / 5
+<button style="width:30px;height:30px;margin-left:2px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.45);display:inline-flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-x" style="font-size:16px"></i></button>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+<div style="position:relative;width:238px;height:238px">
+<svg width="238" height="238" viewBox="0 0 238 238" style="display:block;transform:rotate(-90deg)">
+<circle cx="119" cy="119" r="110" fill="none" stroke="rgba(233,233,237,0.1)" stroke-width="2"></circle>
+<circle cx="119" cy="119" r="110" fill="none" stroke="#9184d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="691" stroke-dashoffset="255" style="filter:drop-shadow(0 0 8px rgba(145,132,217,.85));animation:tp-sweep 90s linear infinite"></circle>
+</svg>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+<div style="font:500 62px/1 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.03em">1:52</div>
+<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(233,233,237,.55);animation:tp-pulse 2.4s ease-in-out infinite">resting</div>
+</div>
+</div>
+<div style="margin-top:30px;width:100%;padding:0 4px">
+<div style="height:1px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="text-align:center;padding-top:20px">
+<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-bottom:8px">up next</div>
+<div style="font:500 26px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.02em">Set 3 · 26<span style="font-size:15px;color:rgba(233,233,237,.45)">kg</span> × 10</div>
+<div style="font-size:12.5px;color:rgba(233,233,237,.45);margin-top:5px">Last set felt solid (RIR 2) — hold the weight</div>
+</div>
+</div>
+</div>
+<div style="padding-bottom:22px;display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;gap:9px">
+<button style="flex:1;min-height:48px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 14px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+30s</button>
+<button style="flex:1;min-height:48px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 14px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Edit set 2</button>
+</div>
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-fast-forward" style="font-size:17px"></i>Skip rest, start set 3</button>
+</div>
+</div>
+</div>
+
+<!-- ─── Live workout · abandon ─── -->
+<div data-screen-label="Abandon" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0;opacity:.3">
+<div style="display:flex;align-items:center;gap:10px;font:500 11px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:.06em;color:rgba(233,233,237,.45)">24:07<span style="flex:1;height:1px;background:rgba(233,233,237,.14)"></span>2 / 5</div>
+<h1 style="margin:16px 0 3px;font-size:25px;font-weight:500;letter-spacing:-.015em">Incline DB Press</h1>
+<div style="display:flex;align-items:flex-end;gap:6px;margin-top:26px">
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">26</span>
+<span style="font-size:17px;color:rgba(233,233,237,.45);padding-bottom:9px">kg</span>
+<span style="margin:0 8px 12px;width:1px;height:44px;background:rgba(233,233,237,.16)"></span>
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">10</span>
+</div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(10,11,18,.6);display:flex;align-items:center;justify-content:center;padding:0 24px">
+<div style="width:100%;background:#1b1d2c;border:1px solid rgba(233,233,237,.12);border-radius:8px;box-shadow:0 24px 56px -20px rgba(0,0,0,.8);padding:24px 22px 20px">
+<h2 style="margin:0;font-size:20px;font-weight:500;letter-spacing:-.01em">Abandon this workout?</h2>
+<p style="margin:9px 0 0;font-size:13px;line-height:1.55;color:rgba(233,233,237,.55)">You've logged 4 sets in 24 minutes. They'll be discarded — nothing goes into your history.</p>
+<div style="display:flex;flex-direction:column;gap:9px;margin-top:20px">
+<button style="width:100%;min-height:50px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 15px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Keep training</button>
+<button style="width:100%;min-height:50px;border-radius:8px;background:transparent;border:1px solid #d98484;color:#d98484;font:500 15px 'Inter';cursor:pointer" style-hover="background:rgba(217,132,132,.12)">Abandon</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ─── Today · finished ─── -->
+<div data-screen-label="Today · done" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>Fri 21 Aug · done
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-target" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-list-checks" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:9px;margin-top:26px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9"><i class="ph ph-check-circle" style="font-size:15px"></i>Upper A logged</div>
+<div style="display:flex;align-items:flex-end;gap:7px;margin-top:12px">
+<span style="font:500 76px/0.88 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">4.3</span>
+<span style="font-size:18px;color:rgba(233,233,237,.45);padding-bottom:9px">tonnes moved</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:16px;margin-top:18px;font-variant-numeric:tabular-nums">
+<div><div style="font-size:23px;font-weight:500">14</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">sets</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500">56<span style="font-size:13px;color:rgba(233,233,237,.55)">m</span></div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">duration</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500;color:#9184d9">+2</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">progressed</div></div>
+</div>
+<div style="height:1px;margin:22px 0 4px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;font-size:15px;font-weight:500">Bench Press</span><span style="font:500 17px 'Inter';font-variant-numeric:tabular-nums">62.5<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span><span style="font-size:11.5px;color:#9184d9;width:34px;text-align:right">+2.5</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;font-size:15px;font-weight:500">Incline DB Press</span><span style="font:500 17px 'Inter';font-variant-numeric:tabular-nums">26<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span><span style="font-size:11.5px;color:rgba(233,233,237,.45);width:34px;text-align:right">held</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;font-size:15px;font-weight:500">Lat Pulldown</span><span style="font:500 17px 'Inter';font-variant-numeric:tabular-nums">57.5<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span><span style="font-size:11.5px;color:#9184d9;width:34px;text-align:right">+2.5</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0">
+<span style="flex:1;font-size:15px;font-weight:500">Cable Row</span><span style="font:500 17px 'Inter';font-variant-numeric:tabular-nums">50<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span><span style="font-size:11.5px;color:rgba(233,233,237,.45);width:34px;text-align:right">held</span>
+</div>
+<div style="margin-top:20px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">next up · Lower A</div>
+<div style="font-size:13px;color:rgba(233,233,237,.45);margin-top:5px">Day 2 of 3 — whenever you're back in.</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<div style="display:flex;gap:9px">
+<button style="flex:1;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-list-checks" style="font-size:17px"></i>See history</button>
+<button style="flex:1;min-height:52px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-play" style="font-size:16px"></i>Train again</button>
+</div>
+</div>
+</div>
+
+<!-- ─── Today · empty ─── -->
+<div data-screen-label="Today · empty" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>Fri 21 Aug
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-target" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-list-checks" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:60px">
+<h1 style="margin:0;font-size:36px;font-weight:500;letter-spacing:-.025em;line-height:1.08;max-width:280px">Nothing in your rotation yet</h1>
+<p style="margin:14px 0 0;max-width:290px;font-size:14px;line-height:1.6;color:rgba(233,233,237,.55)">A rotation is the order you train in — Upper A, Lower A, Upper B, then back round. Build the workouts once and this screen always knows what's next.</p>
+<div style="height:1px;margin:26px 0;width:120px;background:linear-gradient(to right,#9184d9,transparent)"></div>
+<div style="display:flex;flex-direction:column;gap:13px;font-size:13px;color:rgba(233,233,237,.55)">
+<div style="display:flex;gap:11px"><span style="font:500 11px 'Inter';color:#9184d9;width:14px;font-variant-numeric:tabular-nums">01</span>Create a workout with its exercises and target sets</div>
+<div style="display:flex;gap:11px"><span style="font:500 11px 'Inter';color:#9184d9;width:14px;font-variant-numeric:tabular-nums">02</span>Add it to the rotation, in the order you train</div>
+<div style="display:flex;gap:11px"><span style="font:500 11px 'Inter';color:#9184d9;width:14px;font-variant-numeric:tabular-nums">03</span>Come back here and hit Start</div>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-plus" style="font-size:17px"></i>Create your first workout</button>
+</div>
+</div>
+
+<!-- ─── Program ─── -->
+<div data-screen-label="Program" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>3-day rotation
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-target" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-list-checks" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<h1 style="margin:12px 0 0;font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.02">Program</h1>
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:24px">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">Rotation</div>
+<button style="background:transparent;border:none;padding:0;color:#9184d9;font:500 11.5px 'Inter';letter-spacing:.04em;cursor:pointer">Jump to day…</button>
+</div>
+<div style="margin-top:8px">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="width:22px;height:22px;flex:none;border-radius:6px;background:#9184d9;color:#161826;font:500 11px/22px 'Inter';text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 0 12px rgba(145,132,217,.5)">1</span>
+<span style="flex:1;font-size:16px;font-weight:500">Upper A</span>
+<span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#9184d9">next</span>
+<i class="ph ph-dots-six-vertical" style="font-size:17px;color:rgba(233,233,237,.3)"></i>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="width:22px;height:22px;flex:none;border-radius:6px;color:rgba(233,233,237,.45);font:500 11px/20px 'Inter';text-align:center;font-variant-numeric:tabular-nums;box-shadow:inset 0 0 0 1px rgba(233,233,237,.16)">2</span>
+<span style="flex:1;font-size:16px;font-weight:500;color:rgba(233,233,237,.8)">Lower A</span>
+<i class="ph ph-dots-six-vertical" style="font-size:17px;color:rgba(233,233,237,.3)"></i>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="width:22px;height:22px;flex:none;border-radius:6px;color:rgba(233,233,237,.45);font:500 11px/20px 'Inter';text-align:center;font-variant-numeric:tabular-nums;box-shadow:inset 0 0 0 1px rgba(233,233,237,.16)">3</span>
+<span style="flex:1;font-size:16px;font-weight:500;color:rgba(233,233,237,.8)">Upper B</span>
+<i class="ph ph-dots-six-vertical" style="font-size:17px;color:rgba(233,233,237,.3)"></i>
+</div>
+<button style="display:flex;align-items:center;gap:10px;padding:14px 0;background:transparent;border:none;color:rgba(233,233,237,.55);font:500 13.5px 'Inter';cursor:pointer" style-hover="color:#9184d9"><i class="ph ph-plus" style="font-size:15px"></i>Add to rotation</button>
+</div>
+<div style="height:1px;margin:12px 0 0;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:22px">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">Workouts</div>
+<span style="font-size:11.5px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">4</span>
+</div>
+<div style="margin-top:6px">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;min-width:0"><span style="display:block;font-size:15.5px;font-weight:500">Upper A</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">5 exercises · 4 strength, 1 cardio</span></span>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9;background:rgba(145,132,217,.1)"><i class="ph ph-copy" style="font-size:16px"></i></button>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#d98484;background:rgba(217,132,132,.1)"><i class="ph ph-trash" style="font-size:16px"></i></button>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;min-width:0"><span style="display:block;font-size:15.5px;font-weight:500">Lower A</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">6 exercises · 5 strength, 1 cardio</span></span>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9;background:rgba(145,132,217,.1)"><i class="ph ph-copy" style="font-size:16px"></i></button>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#d98484;background:rgba(217,132,132,.1)"><i class="ph ph-trash" style="font-size:16px"></i></button>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1;min-width:0"><span style="display:block;font-size:15.5px;font-weight:500">Upper B</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">5 exercises · 5 strength</span></span>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9;background:rgba(145,132,217,.1)"><i class="ph ph-copy" style="font-size:16px"></i></button>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#d98484;background:rgba(217,132,132,.1)"><i class="ph ph-trash" style="font-size:16px"></i></button>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 0">
+<span style="flex:1;min-width:0"><span style="display:block;font-size:15.5px;font-weight:500;color:rgba(233,233,237,.8)">Full Body (light)</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">4 exercises · not in rotation</span></span>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9;background:rgba(145,132,217,.1)"><i class="ph ph-copy" style="font-size:16px"></i></button>
+<button style="width:34px;height:34px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#d98484;background:rgba(217,132,132,.1)"><i class="ph ph-trash" style="font-size:16px"></i></button>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-plus" style="font-size:17px"></i>New workout</button>
+</div>
+</div>
+
+<!-- ─── Editor ─── -->
+<div data-screen-label="Workout editor" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:10px">
+<button style="display:inline-flex;align-items:center;gap:5px;background:transparent;border:none;padding:0;color:rgba(233,233,237,.55);font:500 12.5px 'Inter';cursor:pointer" style-hover="color:#9184d9"><i class="ph ph-caret-left" style="font-size:15px"></i>Program</button>
+<span style="flex:1"></span>
+<span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.45)">editing</span>
+</div>
+<input value="Upper A" style="margin-top:14px;width:100%;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.16);padding:0 0 10px;color:#e9e9ed;font:500 34px 'Inter';letter-spacing:-.025em;outline:none" style-focus="border-bottom-color:#9184d9">
+<div style="font-size:11px;color:rgba(233,233,237,.45);margin-top:8px">Renaming an exercise below renames it in every workout that uses it.</div>
+
+<div style="margin-top:22px">
+<div style="display:flex;align-items:baseline;gap:10px">
+<span style="font:500 11px 'Inter';color:#9184d9;font-variant-numeric:tabular-nums">01</span>
+<input value="Bench Press" style="flex:1;background:transparent;border:none;padding:0;color:#e9e9ed;font:500 18px 'Inter';letter-spacing:-.01em;outline:none">
+<div style="display:flex;gap:1px">
+<button style="width:30px;height:30px;border-radius:7px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9"><i class="ph ph-copy" style="font-size:15px"></i></button>
+<button style="width:30px;height:30px;border-radius:7px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#9184d9"><i class="ph ph-dots-six-vertical" style="font-size:15px"></i></button>
+<button style="width:30px;height:30px;border-radius:7px;background:transparent;border:none;color:rgba(233,233,237,.4);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="color:#d98484"><i class="ph ph-x" style="font-size:15px"></i></button>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:10px">
+<div style="display:flex;gap:0;border:1px solid rgba(233,233,237,.16);border-radius:8px;overflow:hidden">
+<button style="padding:7px 13px;background:rgba(145,132,217,.14);border:none;color:#d2cefd;font:500 11.5px 'Inter';letter-spacing:.04em;cursor:pointer">Strength</button>
+<button style="padding:7px 13px;background:transparent;border:none;color:rgba(233,233,237,.45);font:500 11.5px 'Inter';letter-spacing:.04em;cursor:pointer" style-hover="background:rgba(233,233,237,.06)">Cardio</button>
+</div>
+<span style="flex:1"></span>
+<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(233,233,237,.45)">rest</span>
+<span style="font:500 15px 'Inter';font-variant-numeric:tabular-nums">3:00</span>
+</div>
+<div style="display:flex;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-top:16px;padding-bottom:6px;border-bottom:1px solid rgba(233,233,237,.16)">
+<span style="width:26px">set</span><span style="width:72px">kg</span><span style="width:60px">reps</span><span style="flex:1;text-align:right">rir</span>
+</div>
+<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(233,233,237,.07)">
+<span style="width:26px;font-size:12px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">1</span>
+<span style="width:72px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">60</span>
+<span style="width:60px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">8</span>
+<div style="flex:1;display:flex;justify-content:flex-end;gap:5px">
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">0</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">1</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:#d2cefd;background:rgba(145,132,217,.14);box-shadow:inset 0 0 0 1px #9184d9">2</span>
+</div>
+</div>
+<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(233,233,237,.07)">
+<span style="width:26px;font-size:12px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">2</span>
+<span style="width:72px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">60</span>
+<span style="width:60px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">8</span>
+<div style="flex:1;display:flex;justify-content:flex-end;gap:5px">
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">0</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">1</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:#d2cefd;background:rgba(145,132,217,.14);box-shadow:inset 0 0 0 1px #9184d9">2</span>
+</div>
+</div>
+<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(233,233,237,.07)">
+<span style="width:26px;font-size:12px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">3</span>
+<span style="width:72px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">60</span>
+<span style="width:60px;font:500 18px 'Inter';font-variant-numeric:tabular-nums">6</span>
+<div style="flex:1;display:flex;justify-content:flex-end;gap:5px">
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">0</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:#d2cefd;background:rgba(145,132,217,.14);box-shadow:inset 0 0 0 1px #9184d9">1</span>
+<span style="width:30px;height:30px;border-radius:7px;font:500 12px/30px 'Inter';text-align:center;color:rgba(233,233,237,.45);box-shadow:inset 0 0 0 1px rgba(233,233,237,.14)">2</span>
+</div>
+</div>
+<button style="display:flex;align-items:center;gap:8px;padding:11px 0;background:transparent;border:none;color:rgba(233,233,237,.55);font:500 12.5px 'Inter';cursor:pointer" style-hover="color:#9184d9"><i class="ph ph-plus" style="font-size:14px"></i>Add set</button>
+</div>
+
+<div style="height:1px;margin:6px 0 0;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="display:flex;align-items:baseline;gap:10px;margin-top:18px">
+<span style="font:500 11px 'Inter';color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">02</span>
+<span style="flex:1;font:500 18px 'Inter';letter-spacing:-.01em;color:rgba(233,233,237,.8)">Incline DB Press</span>
+<span style="font-size:11.5px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">3 × 26kg</span>
+<i class="ph ph-caret-down" style="font-size:14px;color:rgba(233,233,237,.4)"></i>
+</div>
+<div style="display:flex;align-items:baseline;gap:10px;margin-top:16px">
+<span style="font:500 11px 'Inter';color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">03</span>
+<span style="flex:1;font:500 18px 'Inter';letter-spacing:-.01em;color:rgba(233,233,237,.8)">Treadmill</span>
+<span style="font-size:11.5px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">12 min</span>
+<i class="ph ph-caret-down" style="font-size:14px;color:rgba(233,233,237,.4)"></i>
+</div>
+<button style="display:flex;align-items:center;gap:8px;margin-top:18px;padding:0;background:transparent;border:none;color:#9184d9;font:500 13px 'Inter';cursor:pointer"><i class="ph ph-plus" style="font-size:15px"></i>Add exercise</button>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 60%,rgba(22,24,38,0))">
+<div style="display:flex;gap:9px">
+<button style="flex:none;padding:0 18px;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.8);font:500 14px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Save as copy</button>
+<button style="flex:1;min-height:52px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';cursor:pointer" style-hover="background:rgba(145,132,217,.12)">Save changes</button>
+</div>
+</div>
+</div>
+
+<!-- ─── Settings ─── -->
+<div data-screen-label="Settings" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>v1.0.0
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-target" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-list-checks" style="font-size:18px"></i></a>
+<a href="#2a" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<h1 style="margin:12px 0 0;font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.02">Settings</h1>
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-top:30px">Account</div>
+<div style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid rgba(233,233,237,.09);margin-top:6px">
+<span style="flex:1;font-size:15px">Sign out</span>
+<button style="padding:9px 15px;min-height:40px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.8);font:500 12.5px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Sign out</button>
+</div>
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-top:30px">Data</div>
+<div style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid rgba(233,233,237,.09);margin-top:6px">
+<span style="flex:1;font-size:15px;color:rgba(233,233,237,.55)">Export data</span>
+<span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.4);border:1px solid rgba(233,233,237,.14);border-radius:5px;padding:4px 7px">coming soon</span>
+</div>
+<div style="height:1px;margin:30px 0 0;width:120px;background:linear-gradient(to right,rgba(233,233,237,.16),transparent)"></div>
+<p style="margin:16px 0 0;font-size:11.5px;line-height:1.6;color:rgba(233,233,237,.4);max-width:280px">Training Pal v1.0.0<br>All data is stored locally on your device.</p>
+</div>
+</div>
+
+<!-- ─── Sign in ─── -->
+<div data-screen-label="Sign in" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 15% 0%,rgba(145,132,217,.16),transparent 60%)"></div>
+<div style="position:relative;height:100%;padding:58px 24px 0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:9px;font:500 11px 'Inter';letter-spacing:.14em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>Training Pal
+</div>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:80px">
+<h1 style="margin:0;font-size:40px;font-weight:500;letter-spacing:-.03em;line-height:1.04;max-width:270px">Log the set.<br>Nothing else.</h1>
+<p style="margin:14px 0 0;max-width:270px;font-size:14px;line-height:1.6;color:rgba(233,233,237,.55)">Your rotation, your last numbers, and a rest timer. No feed, no streaks, no coaching.</p>
+<div style="margin-top:34px;display:flex;flex-direction:column;gap:16px">
+<div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-bottom:7px">Email</div>
+<input value="mihajlo@trainingpal.app" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.16);padding:0 0 9px;color:#e9e9ed;font:400 16px 'Inter';outline:none" style-focus="border-bottom-color:#9184d9">
+</div>
+<div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-bottom:7px">Password</div>
+<input type="password" value="passwordhere" style="width:100%;background:transparent;border:none;border-bottom:1px solid rgba(233,233,237,.16);padding:0 0 9px;color:#e9e9ed;font:400 16px 'Inter';letter-spacing:.18em;outline:none" style-focus="border-bottom-color:#9184d9">
+</div>
+</div>
+</div>
+<div style="padding-bottom:22px;display:flex;flex-direction:column;gap:14px">
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)">Sign in<i class="ph ph-arrow-right" style="font-size:16px"></i></button>
+<div style="display:flex;align-items:center;gap:12px"><span style="flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(233,233,237,.14))"></span><span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.4)">or</span><span style="flex:1;height:1px;background:linear-gradient(to left,transparent,rgba(233,233,237,.14))"></span></div>
+<button style="width:100%;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 14.5px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:9px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-google-logo" style="font-size:17px"></i>Continue with Google</button>
+<div style="text-align:center;font-size:12.5px;color:rgba(233,233,237,.45)">No account yet? <a href="#2a" style="color:#9184d9">Create one</a></div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section style="padding:44px 48px 64px;border-bottom:1px solid rgba(0,0,0,.08)">
+<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+<span style="font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px">1</span>
+<span style="font:600 13px system-ui,sans-serif;color:#1a1a1a">Three directions on Nocturne</span>
+</div>
+<p style="margin:0 0 26px;max-width:660px;font:400 13px/1.6 system-ui,sans-serif;color:#5c5c66">Same information architecture, same flows — Nocturne's ground (#161826), Inter at weight 500, 8px radii, outlined primary actions, Phosphor icons, and the blurple accent used as a line, a mark and a glow rather than a flood. Each option shows Today and the live-workout screen, because those are the two you actually look at. Everything else (Program, editor, Settings) follows whichever of these you pick.</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+
+<!-- ══════════ 1a ══════════ -->
+<div id="1a" style="display:flex;flex-direction:column;gap:12px;flex:none">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)">
+<a href="#1a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1a</a>
+Retokenized — your layout, Nocturne's values. Lowest-risk: nothing moves, everything cools down.
+</div>
+<div style="display:flex;gap:18px">
+
+<div data-screen-label="1a Today" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed;font-size:15px;line-height:1.55">
+<div style="height:100%;padding:58px 17px 0">
+<h1 style="margin:0 0 17px;font-size:32px;font-weight:500;letter-spacing:-.015em;line-height:1.12">Today</h1>
+<div style="background:#232532;border-radius:8px;box-shadow:0 0 0 1px #3f424d;padding:17px">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:11px">
+<h2 style="margin:0 0 3px;font-size:25px;font-weight:500;letter-spacing:-.015em;line-height:1.12">Upper A</h2>
+<button style="flex:none;height:28px;padding:0 11px;border-radius:8px;font:500 13px 'Inter';color:#e9e9ed;background:transparent;border:1px solid rgba(233,233,237,.16);cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Change</button>
+</div>
+<p style="margin:0 0 17px;font-size:13px;color:rgba(233,233,237,.55)">5 exercises · Day 1 of 3</p>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid rgba(233,233,237,.1)"><span style="font:500 12px/1 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);width:16px">1</span><span style="flex:1;font-size:14px">Bench Press</span><span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">3 × 60kg</span></div>
+<div style="display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid rgba(233,233,237,.1)"><span style="font:500 12px/1 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);width:16px">2</span><span style="flex:1;font-size:14px">Incline DB Press</span><span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">3 × 26kg</span></div>
+<div style="display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid rgba(233,233,237,.1)"><span style="font:500 12px/1 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);width:16px">3</span><span style="flex:1;font-size:14px">Lat Pulldown</span><span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">3 × 55kg</span></div>
+<div style="display:flex;align-items:center;gap:11px;padding:8px 0;border-bottom:1px solid rgba(233,233,237,.1)"><span style="font:500 12px/1 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);width:16px">4</span><span style="flex:1;font-size:14px">Cable Row</span><span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">3 × 50kg</span></div>
+<div style="display:flex;align-items:center;gap:11px;padding:8px 0"><span style="font:500 12px/1 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);width:16px">5</span><span style="flex:1;font-size:14px">Treadmill</span><span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">12 min</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(233,233,237,.16);font-size:12px;color:rgba(233,233,237,.55)">
+<i class="ph ph-clock-counter-clockwise" style="font-size:14px"></i><span>Last session Aug 15</span><span style="margin-left:auto;font-variant-numeric:tabular-nums">58:12</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:9px;margin-top:17px">
+<button style="display:inline-flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:48px;font:500 15px 'Inter';color:#9184d9;background:transparent;border:1px solid #9184d9;border-radius:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-play" style="font-size:17px"></i>Start workout</button>
+<button style="display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:44px;font:500 14px 'Inter';color:#e9e9ed;background:transparent;border:1px solid rgba(233,233,237,.16);border-radius:8px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Skip options</button>
+</div>
+</div>
+<nav style="position:absolute;bottom:6px;left:12px;right:12px;height:58px;padding:5px;background:rgba(35,37,50,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:14px;box-shadow:0 0 0 1px #3f424d,0 12px 32px -8px rgba(0,0,0,.6);display:flex;gap:4px">
+<a href="#1a" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-target" style="font-size:20px"></i><span style="font-size:10.5px;font-weight:500">Today</span></a>
+<a href="#1a" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;border-radius:8px;color:rgba(233,233,237,.45)"><i class="ph ph-list-checks" style="font-size:20px"></i><span style="font-size:10.5px;font-weight:500">Program</span></a>
+<a href="#1a" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;border-radius:8px;color:rgba(233,233,237,.45)"><i class="ph ph-sliders-horizontal" style="font-size:20px"></i><span style="font-size:10.5px;font-weight:500">Settings</span></a>
+</nav>
+</div>
+
+<div data-screen-label="1a Live workout" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 17px 0">
+<div style="display:flex;align-items:center;gap:8px;font:500 12px 'Inter';font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55);letter-spacing:.04em">
+<i class="ph ph-timer" style="font-size:14px"></i>24:07<span style="margin-left:auto;letter-spacing:.08em;text-transform:uppercase;font-size:10px">Exercise 2 / 5</span>
+</div>
+<div style="height:2px;margin:9px 0 15px;background:rgba(233,233,237,.12);border-radius:2px"><div style="height:100%;width:40%;background:#9184d9;border-radius:2px;box-shadow:0 0 12px rgba(145,132,217,.7)"></div></div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+<div><h1 style="margin:0 0 2px;font-size:25px;font-weight:500;letter-spacing:-.015em;line-height:1.12">Incline DB Press</h1><span style="font-size:13px;color:rgba(233,233,237,.55)">3 working sets · rest 180s</span></div>
+<button style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border-radius:8px;background:transparent;border:1px solid transparent;color:rgba(233,233,237,.45);cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-x" style="font-size:18px"></i></button>
+</div>
+<div style="display:flex;flex-direction:column;gap:9px;margin-top:18px">
+<div style="display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:8px;background:rgba(145,132,217,.08);box-shadow:0 0 0 1px rgba(145,132,217,.28)">
+<i class="ph ph-check" style="font-size:16px;color:#9184d9"></i>
+<span style="font-size:12px;font-weight:500;color:rgba(233,233,237,.55);min-width:38px">Set 1</span>
+<span style="font-size:14px;font-variant-numeric:tabular-nums">26kg × 10 · RIR 2</span>
+</div>
+<div style="background:#232532;border-radius:8px;box-shadow:0 0 0 1px #3f424d;padding:15px;display:flex;flex-direction:column;gap:13px">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:13px;font-weight:500">Set 2</span><span style="font-size:12px;color:rgba(233,233,237,.45);font-variant-numeric:tabular-nums">last 26kg × 9 · RIR 1</span></div>
+<div>
+<label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-bottom:6px">Weight · kg</label>
+<div style="display:flex;gap:7px;align-items:center">
+<button style="width:44px;height:44px;flex:none;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font-size:18px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<div style="flex:1;min-width:0;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#161826;box-shadow:0 0 0 1px rgba(233,233,237,.16);font:500 22px 'Inter';font-variant-numeric:tabular-nums">26</div>
+<button style="width:44px;height:44px;flex:none;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font-size:18px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+<button style="width:48px;height:44px;flex:none;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 13px 'Inter';cursor:pointer">1.0</button>
+</div>
+</div>
+<div>
+<label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-bottom:6px">Reps</label>
+<div style="display:flex;gap:7px;align-items:center">
+<button style="width:44px;height:44px;flex:none;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font-size:18px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<div style="flex:1;min-width:0;height:44px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#161826;box-shadow:0 0 0 1px rgba(233,233,237,.16);font:500 22px 'Inter';font-variant-numeric:tabular-nums">10</div>
+<button style="width:44px;height:44px;flex:none;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font-size:18px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+</div>
+</div>
+<div>
+<label style="display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-bottom:6px">Reps in reserve</label>
+<div style="display:flex;gap:7px">
+<button style="flex:1;height:44px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 17px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">0</button>
+<button style="flex:1;height:44px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 17px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">1</button>
+<button style="flex:1;height:44px;border-radius:8px;background:rgba(145,132,217,.14);border:1px solid #9184d9;color:#d2cefd;font:500 17px 'Inter';cursor:pointer">2</button>
+</div>
+</div>
+<button style="width:100%;min-height:48px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';cursor:pointer" style-hover="background:rgba(145,132,217,.12)">Log set 2</button>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:8px;box-shadow:0 0 0 1px rgba(233,233,237,.1);opacity:.5">
+<span style="font-size:12px;font-weight:500;color:rgba(233,233,237,.55);min-width:38px">Set 3</span>
+<span style="font-size:13px;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.55)">26kg × 10 · RIR 2</span>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ══════════ 1b ══════════ -->
+<div id="1b" style="display:flex;flex-direction:column;gap:12px;flex:none">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)">
+<a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1b</a>
+Numbers first — cards dissolve into rules; the figure you're chasing is the biggest thing on screen. Nav moves to the top row so the thumb zone belongs to the action; live mode stays full-screen, as it does today.
+</div>
+<div style="display:flex;gap:18px">
+
+<div data-screen-label="1b Today" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;font:500 11px 'Inter';letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="width:14px;height:1px;background:#9184d9;box-shadow:0 0 8px rgba(145,132,217,.8)"></span>Fri 21 Aug · day 1 of 3
+</div>
+<div style="display:flex;gap:2px;flex:none">
+<a href="#1b" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:#9184d9;background:rgba(145,132,217,.12)"><i class="ph-fill ph-target" style="font-size:18px"></i></a>
+<a href="#1b" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-list-checks" style="font-size:18px"></i></a>
+<a href="#1b" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:rgba(233,233,237,.55)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></a>
+</div>
+</div>
+<h1 style="margin:12px 0 0;font-size:42px;font-weight:500;letter-spacing:-.025em;line-height:1.02">Upper A</h1>
+<div style="display:flex;align-items:baseline;gap:16px;margin-top:10px;font-variant-numeric:tabular-nums">
+<div><div style="font-size:23px;font-weight:500">14</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">sets</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500">4.1<span style="font-size:13px;color:rgba(233,233,237,.55)">t</span></div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">volume</div></div>
+<div style="width:1px;height:26px;background:rgba(233,233,237,.16)"></div>
+<div><div style="font-size:23px;font-weight:500">~58<span style="font-size:13px;color:rgba(233,233,237,.55)">m</span></div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45)">est.</div></div>
+</div>
+<div style="height:1px;margin:20px 0 4px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 40px,rgba(233,233,237,.16) calc(100% - 40px),transparent)"></div>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Bench Press</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 2 · rest 3:00</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">60<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×8</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Incline DB Press</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 2 · rest 3:00</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">26<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×10</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Lat Pulldown</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 1 · rest 2:30</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">55<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×10</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0;border-bottom:1px solid rgba(233,233,237,.09)">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Cable Row</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">3 sets · RIR 1 · rest 2:30</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">50<span style="font-size:12px;color:rgba(233,233,237,.45)">kg</span></span>
+<span style="font-size:12px;color:rgba(233,233,237,.45);width:26px;text-align:right">×12</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:12px;padding:13px 0">
+<span style="flex:1"><span style="display:block;font-size:15px;font-weight:500">Treadmill</span><span style="font-size:11.5px;color:rgba(233,233,237,.45)">incline 6 · speed 5.5</span></span>
+<span style="font:500 19px 'Inter';font-variant-numeric:tabular-nums">12<span style="font-size:12px;color:rgba(233,233,237,.45)">min</span></span>
+<span style="width:26px"></span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11.5px;color:rgba(233,233,237,.45)">
+<i class="ph ph-arrow-up-right" style="font-size:13px;color:#9184d9"></i>Bench up 2.5kg on last time
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<div style="display:flex;gap:9px">
+<button style="flex:1;min-height:52px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-play" style="font-size:17px"></i>Start</button>
+<button style="width:52px;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-arrows-left-right" style="font-size:18px"></i></button>
+<button style="width:52px;min-height:52px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);display:inline-flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(233,233,237,.07)"><i class="ph ph-dots-three" style="font-size:18px"></i></button>
+</div>
+</div>
+</div>
+
+<div data-screen-label="1b Live workout" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="padding:58px 20px 0">
+<div style="display:flex;align-items:center;gap:10px;font:500 11px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:.06em;color:rgba(233,233,237,.45)">
+24:07<span style="flex:1;height:1px;background:rgba(233,233,237,.14)"></span>2 / 5
+<button style="width:30px;height:30px;margin-left:2px;border-radius:8px;background:transparent;border:none;color:rgba(233,233,237,.45);display:inline-flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-x" style="font-size:16px"></i></button>
+</div>
+<h1 style="margin:16px 0 3px;font-size:25px;font-weight:500;letter-spacing:-.015em">Incline DB Press</h1>
+<div style="font-size:12px;color:rgba(233,233,237,.45)">set 2 of 3 · last time 26kg × 9 @ RIR 1</div>
+
+<div style="display:flex;align-items:flex-end;gap:6px;margin-top:26px">
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">26</span>
+<span style="font-size:17px;color:rgba(233,233,237,.45);padding-bottom:9px">kg</span>
+<span style="margin:0 8px 12px;width:1px;height:44px;background:rgba(233,233,237,.16)"></span>
+<span style="font:500 84px/0.86 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.04em">10</span>
+<span style="font-size:17px;color:rgba(233,233,237,.45);padding-bottom:9px">reps</span>
+</div>
+<div style="display:flex;gap:9px;margin-top:20px">
+<div style="flex:1;display:flex;gap:7px">
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+</div>
+<div style="width:1px;background:rgba(233,233,237,.1)"></div>
+<div style="flex:1;display:flex;gap:7px">
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">−</button>
+<button style="flex:1;height:58px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:400 22px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+</button>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:9px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(233,233,237,.55)">
+<span style="flex:1">step 1.0 kg</span><span style="flex:1;text-align:right">reps</span>
+</div>
+
+<div style="margin-top:22px">
+<div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(233,233,237,.45);margin-bottom:8px">Reps in reserve</div>
+<div style="display:flex;gap:7px">
+<button style="flex:1;height:50px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">0<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">failure</span></button>
+<button style="flex:1;height:50px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:rgba(233,233,237,.55);font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer" style-hover="background:rgba(233,233,237,.07)">1<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">hard</span></button>
+<button style="flex:1;height:50px;border-radius:8px;background:rgba(145,132,217,.14);border:1px solid #9184d9;color:#d2cefd;font:500 15px 'Inter';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer">2<span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7">solid</span></button>
+</div>
+</div>
+
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:2px">
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(233,233,237,.09);font-size:13px">
+<i class="ph ph-check" style="font-size:14px;color:#9184d9"></i><span style="color:rgba(233,233,237,.45);min-width:34px">Set 1</span><span style="font-variant-numeric:tabular-nums">26 × 10</span><span style="margin-left:auto;font-size:11.5px;color:rgba(233,233,237,.45)">RIR 2</span>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid rgba(233,233,237,.09);font-size:13px;color:rgba(233,233,237,.55)">
+<i class="ph ph-minus" style="font-size:14px"></i><span style="min-width:34px">Set 3</span><span style="font-variant-numeric:tabular-nums">26 × 10</span><span style="margin-left:auto;font-size:11.5px">planned</span>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 55%,rgba(22,24,38,0))">
+<button style="width:100%;min-height:56px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 16px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-check" style="font-size:18px"></i>Log set 2 of 3</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ══════════ 1c ══════════ -->
+<div id="1c" style="display:flex;flex-direction:column;gap:12px;flex:none">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)">
+<a href="#1c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1c</a>
+Ledger — a training log, not an app: fills gone, a day rail, and rest as a full-screen countdown ring.
+</div>
+<div style="display:flex;gap:18px">
+
+<div data-screen-label="1c Today" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;display:flex">
+<div style="width:56px;flex:none;padding:58px 0 0;display:flex;flex-direction:column;align-items:center;gap:14px;border-right:1px solid rgba(233,233,237,.09)">
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">cycle</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 12px 'Inter';color:#161826;background:#9184d9">1</div><div style="font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#9184d9">now</div></div>
+<div style="width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 12px 'Inter';color:rgba(233,233,237,.45);box-shadow:0 0 0 1px rgba(233,233,237,.16)">2</div>
+<div style="width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:500 12px 'Inter';color:rgba(233,233,237,.45);box-shadow:0 0 0 1px rgba(233,233,237,.16)">3</div>
+<div style="width:1px;flex:1;background:linear-gradient(to bottom,rgba(233,233,237,.16),transparent)"></div>
+<div style="padding-bottom:22px;display:flex;flex-direction:column;gap:16px;align-items:center">
+<i class="ph ph-list-checks" style="font-size:19px;color:rgba(233,233,237,.55)"></i>
+<i class="ph ph-sliders-horizontal" style="font-size:19px;color:rgba(233,233,237,.55)"></i>
+</div>
+</div>
+<div style="flex:1;min-width:0;padding:58px 20px 0">
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">Fri 21 Aug</div>
+<h1 style="margin:9px 0 0;font-size:32px;font-weight:500;letter-spacing:-.02em;line-height:1.08">Upper A</h1>
+<p style="margin:6px 0 0;font-size:12.5px;color:rgba(233,233,237,.5)">Last run 6 days ago · 58 min · every lift held or up</p>
+
+<div style="margin-top:22px">
+<div style="display:flex;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55);padding-bottom:7px;border-bottom:1px solid rgba(233,233,237,.16)">
+<span style="flex:1">exercise</span><span style="width:52px;text-align:right">target</span><span style="width:34px;text-align:right">sets</span>
+</div>
+<div style="display:flex;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(233,233,237,.07);font-size:14px"><span style="flex:1">Bench Press</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500">60×8</span><span style="width:34px;text-align:right;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.45)">3</span></div>
+<div style="display:flex;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(233,233,237,.07);font-size:14px"><span style="flex:1">Incline DB Press</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500">26×10</span><span style="width:34px;text-align:right;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.45)">3</span></div>
+<div style="display:flex;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(233,233,237,.07);font-size:14px"><span style="flex:1">Lat Pulldown</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500">55×10</span><span style="width:34px;text-align:right;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.45)">3</span></div>
+<div style="display:flex;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(233,233,237,.07);font-size:14px"><span style="flex:1">Cable Row</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500">50×12</span><span style="width:34px;text-align:right;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.45)">3</span></div>
+<div style="display:flex;align-items:baseline;padding:11px 0;font-size:14px"><span style="flex:1">Treadmill</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;font-weight:500">12min</span><span style="width:34px;text-align:right;font-variant-numeric:tabular-nums;color:rgba(233,233,237,.45)">1</span></div>
+</div>
+
+<div style="margin-top:24px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55)">consistency · 8 weeks</div>
+<div style="display:flex;gap:4px;margin-top:10px;flex-wrap:wrap;max-width:250px">
+<span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(233,233,237,.1)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.4)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(233,233,237,.1)"></span>
+<span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(233,233,237,.1)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.4)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span><span style="width:11px;height:11px;border-radius:2px;background:rgba(145,132,217,.75)"></span>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:56px;right:0;bottom:0;padding:14px 20px 22px;background:linear-gradient(to top,#161826 60%,rgba(22,24,38,0))">
+<button style="width:100%;min-height:54px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)">Begin session<i class="ph ph-arrow-right" style="font-size:16px"></i></button>
+</div>
+</div>
+
+<div data-screen-label="1c Rest" style="position:relative;width:390px;height:844px;background:#161826;border-radius:34px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 18px 44px -16px rgba(0,0,0,.5);color:#e9e9ed">
+<div style="height:100%;padding:58px 20px 0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;font:500 11px 'Inter';font-variant-numeric:tabular-nums;letter-spacing:.06em;color:rgba(233,233,237,.55)">
+24:07<span style="flex:1;height:1px;background:rgba(233,233,237,.14)"></span>Incline DB Press · set 2 done
+</div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+<div style="position:relative;width:238px;height:238px">
+<svg width="238" height="238" viewBox="0 0 238 238" style="display:block;transform:rotate(-90deg)">
+<circle cx="119" cy="119" r="110" fill="none" stroke="rgba(233,233,237,0.1)" stroke-width="2"></circle>
+<circle cx="119" cy="119" r="110" fill="none" stroke="#9184d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="691" stroke-dashoffset="255" style="filter:drop-shadow(0 0 8px rgba(145,132,217,.85));animation:tp-sweep 90s linear infinite"></circle>
+</svg>
+<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+<div style="font:500 62px/1 'Inter';font-variant-numeric:tabular-nums;letter-spacing:-.03em">1:52</div>
+<div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(233,233,237,.55);animation:tp-pulse 2.4s ease-in-out infinite">resting</div>
+</div>
+</div>
+<div style="margin-top:26px;text-align:center">
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.55);margin-bottom:6px">up next</div>
+<div style="font-size:19px;font-weight:500">Set 3 · 26kg × 10</div>
+<div style="font-size:12.5px;color:rgba(233,233,237,.45);margin-top:3px">last set felt solid (RIR 2) — hold the weight</div>
+</div>
+</div>
+<div style="padding-bottom:22px;display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;gap:9px">
+<button style="flex:1;min-height:48px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 14px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">+30s</button>
+<button style="flex:1;min-height:48px;border-radius:8px;background:transparent;border:1px solid rgba(233,233,237,.16);color:#e9e9ed;font:500 14px 'Inter';cursor:pointer" style-hover="background:rgba(233,233,237,.07)">Edit set 2</button>
+</div>
+<button style="width:100%;min-height:54px;border-radius:8px;background:transparent;border:1px solid #9184d9;color:#9184d9;font:500 15px 'Inter';display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" style-hover="background:rgba(145,132,217,.12)"><i class="ph ph-fast-forward" style="font-size:16px"></i>Skip rest, start set 3</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<p style="margin:26px 0 0;max-width:660px;font:400 12px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.5)">Try next: "build out <a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1b</a> across Program and the editor" · "take <a href="#1c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1c</a>'s rest screen into <a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px">1b</a>" · "make it a working prototype I can tap through"</p>
+</section>
+</x-dc>
+</body>
+</html>

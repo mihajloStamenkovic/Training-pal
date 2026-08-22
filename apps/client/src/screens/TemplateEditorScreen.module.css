@@ -1,65 +1,83 @@
 .topBar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
+  min-height: 36px;
 }
 
 .backBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  padding: 0;
+  min-height: 0;
   background: transparent;
-  color: var(--accent);
-  font-size: 15px;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12.5px;
   font-weight: 500;
-  min-height: 36px;
-  padding: 6px 8px;
-  border-radius: var(--radius-sm);
 }
 
-.title {
-  font-size: 20px;
-  font-weight: 700;
+.backBtn:active {
+  color: var(--accent);
 }
 
-.nameField {
-  margin-bottom: 20px;
+.mode {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .nameInput {
-  font-size: 18px;
-  font-weight: 600;
-  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  padding: 0 0 10px;
+}
+
+.nameHint {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 8px;
 }
 
 .exerciseList {
+  margin-top: 22px;
+}
+
+.exerciseSlot {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 16px;
+}
+
+.exerciseSlot + .exerciseSlot {
+  margin-top: 6px;
 }
 
 .addBtn {
-  width: 100%;
-  padding: 14px;
-  min-height: 48px;
-  background: var(--bg-secondary);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 0;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--accent);
+  font-size: 13px;
   font-weight: 500;
 }
 
-.addBtn:active {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.saveArea {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px 0 40px;
+.copyBtn {
+  flex: none;
+  padding: 0 18px;
+  min-height: 52px;
+  font-size: 14px;
+  color: rgba(233, 233, 237, 0.8);
 }

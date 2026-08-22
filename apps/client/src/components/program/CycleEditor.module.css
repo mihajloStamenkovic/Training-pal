@@ -1,274 +1,215 @@
 .section {
-  margin-bottom: 28px;
+  margin-top: 24px;
 }
 
 .sectionHead {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
 }
 
-.sectionTitle {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.resetArea {
-  position: relative;
-}
-
-.resetBtn {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.25);
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-}
-
-.resetBtn:active {
-  background: rgba(34, 197, 94, 0.22);
-}
-
-.resetDropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 6px;
-  min-width: 220px;
-  max-height: 260px;
-  overflow-y: auto;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 8px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.8);
-}
-
-.resetHint {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  padding: 2px 4px 6px;
-}
-
-.resetOption {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 12px;
+.jumpBtn {
   background: transparent;
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-size: 14px;
+  border: none;
+  padding: 0;
+  min-height: 0;
+  color: var(--accent);
+  font-size: 11.5px;
   font-weight: 500;
-  text-align: left;
-  min-height: 42px;
+  letter-spacing: 0.04em;
 }
 
-.resetOption:active {
-  background: var(--border);
+.list {
+  margin-top: 8px;
 }
 
-.resetOptionCurrent {
-  background: rgba(34, 197, 94, 0.1);
-}
-
-.resetOptionDay {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  min-width: 44px;
-  flex-shrink: 0;
-}
-
-.resetOptionName {
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sequenceList {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.sequenceItem {
+.row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
 }
 
-.sequenceItem.current {
-  border-color: rgba(34, 197, 94, 0.5);
-  background: linear-gradient(180deg, rgba(34, 197, 94, 0.08), var(--bg-secondary));
-}
-
+/* The day you're on is the only lit mark on the screen. */
 .dayNum {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-muted);
-  width: 20px;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 20px;
   text-align: center;
-  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
-.templateName {
+.dayNumCurrent {
+  line-height: 22px;
+  color: var(--bg-primary);
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(145, 132, 217, 0.5);
+}
+
+.name {
   flex: 1;
-  font-size: 15px;
-  font-weight: 500;
   min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.currentBadge {
+.nameQuiet {
+  color: rgba(233, 233, 237, 0.8);
+}
+
+.nextBadge {
+  flex: none;
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
-  background: rgba(34, 197, 94, 0.15);
-  padding: 3px 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
 }
 
-.itemActions {
+.rowActions {
   display: flex;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 1px;
+  flex: none;
 }
 
-.moveBtn, .removeBtn {
+.iconBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 30px;
   height: 30px;
   min-height: 30px;
-  border-radius: 8px;
+  border-radius: 7px;
   background: transparent;
-  color: var(--text-muted);
+  border: none;
+  color: rgba(233, 233, 237, 0.4);
 }
 
-.moveBtn:disabled {
-  opacity: 0.3;
+.iconBtn:disabled {
+  opacity: 0.25;
+}
+
+.iconBtn:active:not(:disabled) {
+  color: var(--accent);
+  background: rgba(145, 132, 217, 0.1);
 }
 
 .removeBtn:active {
   color: var(--accent-danger);
-  background: var(--bg-tertiary);
+  background: rgba(217, 132, 132, 0.1);
 }
 
 .emptyNote {
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--text-muted);
-  padding: 16px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+  margin-top: 8px;
 }
 
 .addBtn {
-  width: 100%;
-  padding: 14px;
-  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  min-height: 0;
   background: transparent;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  border: none;
+  border-radius: 0;
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 500;
 }
 
 .addBtn:active {
-  background: var(--bg-secondary);
+  color: var(--accent);
 }
 
-.picker {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
+/* ─── Sheet contents ────────────────────────────────────────── */
+
+.sheetOption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 15px 0;
+  min-height: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  color: var(--text-primary);
+  text-align: left;
 }
 
-.pickerLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
+.sheetOption:last-child {
+  border-bottom: none;
+}
+
+.sheetOption:active {
+  background: rgba(233, 233, 237, 0.04);
+}
+
+.sheetDay {
+  width: 20px;
+  flex: none;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.sheetDayCurrent {
+  color: var(--accent);
+}
+
+.sheetName {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sheetMeta {
+  flex: none;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.sheetBadge {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .pickerEmpty {
   font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  padding: 12px 0;
 }
 
 .linkBtn {
   background: transparent;
+  border: none;
   color: var(--accent);
   font-size: 14px;
   font-weight: 500;
-  min-height: 20px;
+  min-height: 0;
   padding: 0;
   text-decoration: underline;
-}
-
-.pickerList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.pickerItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-  min-height: 48px;
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 15px;
-  font-weight: 500;
-  text-align: left;
-}
-
-.pickerItem:active {
-  background: var(--border);
-}
-
-.pickerMeta {
-  font-size: 12px;
-  color: var(--text-muted);
-  flex-shrink: 0;
 }

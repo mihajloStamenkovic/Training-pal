@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Plus } from '@phosphor-icons/react';
 import { trpc } from '../lib/trpc';
 import { cloneExercises, copyTemplateName } from '../utils/templates';
 import CycleEditor from '../components/program/CycleEditor';
@@ -9,6 +10,7 @@ import ConfirmDialog from '../components/common/ConfirmDialog';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
+import PageHeader from '../components/layout/PageHeader';
 import styles from './ProgramScreen.module.css';
 
 export default function ProgramScreen() {
@@ -69,18 +71,25 @@ export default function ProgramScreen() {
     );
   }
 
+  const rotationLength = cycle?.sequence.length ?? 0;
+  const inRotation = new Set(cycle?.sequence ?? []);
+
   return (
     <div className="page">
+      <PageHeader
+        eyebrow={rotationLength > 0 ? `${rotationLength}-day rotation` : 'No rotation yet'}
+      />
+
       <h1 className="page-title">Program</h1>
 
       <CycleEditor templates={templates ?? []} cycle={cycle ?? null} />
 
+      <div className={`rule ${styles.rule}`} />
+
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h2 className={styles.sectionTitle}>Workouts</h2>
-          <button className={styles.newBtn} onClick={() => navigate('/program/new')}>
-            + New
-          </button>
+          <h2 className="section-label">Workouts</h2>
+          <span className={styles.count}>{templates?.length ?? 0}</span>
         </div>
 
         {templates && templates.length > 0 ? (
@@ -89,6 +98,7 @@ export default function ProgramScreen() {
               <TemplateCard
                 key={t.id}
                 template={t}
+                inRotation={inRotation.has(t.id)}
                 onDelete={setDeleteTarget}
                 onDuplicate={handleDuplicate}
               />
@@ -98,18 +108,25 @@ export default function ProgramScreen() {
           <EmptyState
             title="No workouts yet"
             description="A workout is a set of exercises you repeat — Upper A, Legs, and so on."
-            action={
-              <Button onClick={() => navigate('/program/new')}>+ Create Your First Workout</Button>
-            }
           />
         )}
       </section>
 
+      <div className="action-pad">
+        <div className="action-pad-inner">
+          <Button fullWidth lead onClick={() => navigate('/program/new')}>
+            <Plus size={17} />
+            New workout
+          </Button>
+        </div>
+      </div>
+
       {deleteTarget && (
         <ConfirmDialog
-          title="Delete Workout"
+          title="Delete workout?"
           message="This will permanently delete this workout and remove it from your rotation. Past sessions are kept."
           confirmLabel="Delete"
+          cancelLabel="Keep it"
           danger
           onConfirm={handleDelete}
           onCancel={() => setDeleteTarget(null)}

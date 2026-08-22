@@ -1,41 +1,152 @@
 .container {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 14px 18px;
-  margin: 12px 0;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.centre {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.ringWrap {
+  position: relative;
+  width: 238px;
+  height: 238px;
+  flex: none;
+}
+
+.ring {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.ringProgress {
+  filter: drop-shadow(0 0 8px rgba(145, 132, 217, 0.85));
+  transition: stroke-dashoffset 0.25s linear;
+}
+
+.ringLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
 }
 
 .time {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 62px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
+}
+
+.resting {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  animation: restPulse 2.4s ease-in-out infinite;
+}
+
+.nextBlock {
+  margin-top: 30px;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.nextInner {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.nextLabel {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.nextValue {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.coach {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.pad {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-bottom: calc(22px + var(--safe-bottom));
+}
+
+.padRow {
+  display: flex;
+  gap: 9px;
+}
+
+.secondaryBtn {
   flex: 1;
+  min-height: 48px;
+  border-radius: var(--radius);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.secondaryBtn:active {
+  background: var(--neutral-hover);
 }
 
 .skipBtn {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: var(--bg-tertiary);
-  padding: 8px 14px;
-  min-height: 36px;
-  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  border-radius: var(--radius);
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .skipBtn:active {
-  background: var(--border);
-  color: var(--text-secondary);
+  background: var(--accent-hover);
+}
+
+@keyframes restPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resting {
+    animation: none;
+  }
+  .ringProgress {
+    transition: none;
+  }
 }

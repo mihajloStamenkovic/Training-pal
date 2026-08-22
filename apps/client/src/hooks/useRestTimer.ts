@@ -2,14 +2,19 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface UseRestTimerReturn {
   remaining: number;
+  /** What the timer was started with — the ring's denominator. */
+  total: number;
   isActive: boolean;
   start: (durationSeconds: number) => void;
+  /** Pushes the end time out without restarting the countdown. */
+  extend: (seconds: number) => void;
   cancel: () => void;
 }
 
 export function useRestTimer(onComplete?: () => void): UseRestTimerReturn {
   const [endTime, setEndTime] = useState<number | null>(null);
   const [remaining, setRemaining] = useState(0);
+  const [total, setTotal] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const rafRef = useRef(0);
   const onCompleteRef = useRef(onComplete);
@@ -22,7 +27,13 @@ export function useRestTimer(onComplete?: () => void): UseRestTimerReturn {
     const end = Date.now() + durationSeconds * 1000;
     setEndTime(end);
     setRemaining(durationSeconds);
+    setTotal(durationSeconds);
     setIsActive(true);
+  }, []);
+
+  const extend = useCallback((seconds: number) => {
+    setEndTime((prev) => (prev === null ? prev : prev + seconds * 1000));
+    setTotal((prev) => prev + seconds);
   }, []);
 
   const cancel = useCallback(() => {
@@ -72,5 +83,5 @@ export function useRestTimer(onComplete?: () => void): UseRestTimerReturn {
     return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [endTime]);
 
-  return { remaining, isActive, start, cancel };
+  return { remaining, total, isActive, start, extend, cancel };
 }

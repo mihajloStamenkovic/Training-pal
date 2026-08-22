@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Check, X } from '@phosphor-icons/react';
 import { trpc, trpcClient } from '../lib/trpc';
 import { todayString } from '../utils/dates';
 import { getLastSessionExercises } from '../utils/predictions';
+import { formatNumber } from '../utils/workoutStats';
 import { exerciseConfigKey, exerciseNameKey } from '../db/types';
 import { useRestTimer } from '../hooks/useRestTimer';
 import { useStopwatch, formatStopwatch } from '../hooks/useStopwatch';
@@ -43,6 +45,20 @@ const emptyInput: WorkoutDraftInput = {
   speed: '',
   durationMinutes: '',
 };
+
+/** How wide a display figure needs to be, in digit widths. */
+function figureWidth(value: string): string {
+  return `${Math.max(2, value.length)}ch`;
+}
+
+/** What the last set's RIR says about the next one. */
+function coachingLine(set: SessionSet | undefined, type: 'strength' | 'cardio'): string | null {
+  if (!set || type !== 'strength') return null;
+  const rir = (set as StrengthSet).rir;
+  if (rir === 0) return 'Last set went to failure — hold the weight, or drop a little.';
+  if (rir === 1) return 'Last set was hard (RIR 1) — hold the weight.';
+  return 'Last set felt solid (RIR 2) — add a little next time.';
+}
 
 export default function LiveWorkoutScreen() {
   const navigate = useNavigate();
@@ -302,6 +318,36 @@ export default function LiveWorkoutScreen() {
     }, 100);
   }
 
+  // Takes the most recent set back out of the log and reopens it for editing —
+  // the "Edit set n" escape hatch on the rest screen.
+  function reopenLastSet() {
+    if (!currentEx) return;
+    const logged = completedSets.get(currentEx.id) ?? [];
+    const last = logged[logged.length - 1];
+    if (!last) return;
+
+    timer.cancel();
+    setCompletedSets((prev) => {
+      const next = new Map(prev);
+      next.set(currentEx.id, logged.slice(0, -1));
+      return next;
+    });
+    setCurrentSetNum(last.setNumber);
+
+    if (currentEx.type === 'strength') {
+      const s = last as StrengthSet;
+      setInput({ ...emptyInput, weight: String(s.weight), reps: String(s.reps), rir: s.rir });
+    } else {
+      const c = last as CardioSet;
+      setInput({
+        ...emptyInput,
+        incline: String(c.incline),
+        speed: String(c.speed),
+        durationMinutes: String(c.durationMinutes),
+      });
+    }
+  }
+
   function nextExercise() {
     timer.cancel();
     const nextIdx = currentExIndex + 1;
@@ -420,7 +466,8 @@ export default function LiveWorkoutScreen() {
   }
   if (!loaded || !currentEx) return <LoadingSpinner />;
 
-  const canSave = currentEx.type === 'strength'
+  const isStrength = currentEx.type === 'strength';
+  const canSave = isStrength
     ? input.weight !== '' && input.reps !== '' && input.rir !== null
     : input.incline !== '' && input.speed !== '' && input.durationMinutes !== '';
 
@@ -437,174 +484,263 @@ export default function LiveWorkoutScreen() {
     return predSet ?? null;
   }
 
+  const lastLogged = exCompletedSets[exCompletedSets.length - 1];
+  const nextExerciseName = exercises[currentExIndex + 1]?.name ?? '';
+
+  // What the rest screen counts down towards.
+  const restingBeforeNextExercise = allSetsDone;
+  const upNext = restingBeforeNextExercise
+    ? nextExerciseName
+    : isStrength
+      ? `Set ${currentSetNum} · ${formatNumber(parseFloat(input.weight) || 0)}kg × ${input.reps || 0}`
+      : `Set ${currentSetNum}`;
+  const skipLabel = restingBeforeNextExercise
+    ? 'Skip rest, next exercise'
+    : `Skip rest, start set ${currentSetNum}`;
+
+  const header = (
+    <div className={styles.strip}>
+      <div className={styles.stopwatch}>{formatStopwatch(elapsedSeconds)}</div>
+      <ExerciseProgress current={currentExIndex} total={exercises.length} />
+      <button
+        className={styles.abandonBtn}
+        onClick={() => setShowAbandon(true)}
+        aria-label="Abandon workout"
+      >
+        <X size={16} />
+      </button>
+    </div>
+  );
+
+  if (timer.isActive) {
+    return (
+      <div className={styles.page}>
+        {header}
+        <RestTimerDisplay
+          remaining={timer.remaining}
+          total={timer.total}
+          upNext={upNext}
+          coachLine={coachingLine(lastLogged, currentEx.type)}
+          skipLabel={skipLabel}
+          editLabel={lastLogged ? `Edit set ${lastLogged.setNumber}` : undefined}
+          onSkip={timer.cancel}
+          onAddTime={() => timer.extend(30)}
+          onEdit={lastLogged ? reopenLastSet : undefined}
+        />
+        {showAbandon && (
+          <ConfirmDialog
+            title="Abandon this workout?"
+            message="Your progress for this session will be discarded — nothing goes into your history."
+            confirmLabel="Abandon"
+            cancelLabel="Keep training"
+            danger
+            onConfirm={handleAbandon}
+            onCancel={() => setShowAbandon(false)}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <div className={styles.stopwatch}>{formatStopwatch(elapsedSeconds)}</div>
-        <ExerciseProgress current={currentExIndex} total={exercises.length} />
-        <div className={styles.headerRow}>
-          <h1 className={styles.exName}>{currentEx.name}</h1>
-          <button className={styles.abandonBtn} onClick={() => setShowAbandon(true)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+      {header}
+
+      <div className={styles.scroll}>
+        <h1 className={styles.exName}>{currentEx.name}</h1>
+        <div className={styles.exMeta}>
+          {allSetsDone
+            ? `${totalSetsForEx} of ${totalSetsForEx} sets logged`
+            : `set ${currentSetNum} of ${totalSetsForEx}`}
+          {(() => {
+            const predSet =
+              currentPred?.type === currentEx.type ? currentPred.sets[currentSetNum - 1] : null;
+            if (!predSet) return null;
+            if (currentEx.type === 'strength') {
+              const p = predSet as StrengthSet;
+              return ` · last time ${formatNumber(p.weight)}kg × ${p.reps} @ RIR ${p.rir}`;
+            }
+            const p = predSet as CardioSet;
+            return ` · last time incline ${formatNumber(p.incline)} · speed ${formatNumber(p.speed)} · ${p.durationMinutes}min`;
+          })()}
         </div>
-        <span className={styles.exType}>
-          {currentEx.type === 'strength'
-            ? `${totalSetsForEx} working set${totalSetsForEx !== 1 ? 's' : ''} · Rest ${currentEx.restSeconds}s`
-            : 'Cardio'}
-        </span>
-      </div>
 
-      <div className={styles.setsList}>
-        {/* Completed sets */}
-        {exCompletedSets.map((set, i) => (
-          <CompletedSetRow key={i} setNumber={i + 1} set={set} type={currentEx.type} />
-        ))}
-
-        {/* Rest timer — blocks next set/exercise until done */}
-        {timer.isActive && (
-          <RestTimerDisplay remaining={timer.remaining} onSkip={timer.cancel} />
-        )}
-
-        {/* Active set input — hidden while timer is running */}
-        {!allSetsDone && !timer.isActive && (
-          <div className={styles.activeSet} ref={activeSetRef}>
-            {/* Prediction hint */}
-            {currentPred && currentPred.type === currentEx.type && currentPred.sets[currentSetNum - 1] && (
-              <div className={styles.predHint}>
-                {currentEx.type === 'strength'
-                  ? (() => {
-                      const p = currentPred.sets[currentSetNum - 1] as StrengthSet;
-                      return `Last: ${p.weight}kg × ${p.reps} @ RIR ${p.rir}`;
-                    })()
-                  : (() => {
-                      const p = currentPred.sets[currentSetNum - 1] as CardioSet;
-                      return `Last: Incline ${p.incline} · Speed ${p.speed} · ${p.durationMinutes}min`;
-                    })()}
-              </div>
-            )}
-
-            <div className={styles.setLabel}>Set {currentSetNum}</div>
-
-            {currentEx.type === 'strength' ? (
+        {!allSetsDone && (
+          <div ref={activeSetRef}>
+            {isStrength ? (
               <>
-                <div className={styles.fieldGroup}>
-                  <label className={styles.fieldLabel}>Weight (kg)</label>
-                  <div className={styles.fieldRow}>
-                    <button className={styles.incBtn} onClick={() => {
-                      const cur = parseFloat(input.weight) || 0;
-                      setInput((p) => ({ ...p, weight: String(Math.max(0, +(cur - weightStep).toFixed(2))) }));
-                    }}>−</button>
-                    <NumberInput
-                      value={input.weight}
-                      onChange={(v) => setInput((p) => ({ ...p, weight: v }))}
-                      decimal
-                      placeholder="0"
-                    />
-                    <button className={styles.incBtn} onClick={() => {
-                      const cur = parseFloat(input.weight) || 0;
-                      setInput((p) => ({ ...p, weight: String(+(cur + weightStep).toFixed(2)) }));
-                    }}>+</button>
+                <div className={styles.figures}>
+                  <NumberInput
+                    display
+                    decimal
+                    value={input.weight}
+                    onChange={(v) => setInput((p) => ({ ...p, weight: v }))}
+                    placeholder="0"
+                    aria-label="Weight in kilograms"
+                    style={{ width: figureWidth(input.weight) }}
+                  />
+                  <span className={styles.figureUnit}>kg</span>
+                  <span className={styles.figureDivider} />
+                  <NumberInput
+                    display
+                    value={input.reps}
+                    onChange={(v) => setInput((p) => ({ ...p, reps: v }))}
+                    placeholder="0"
+                    aria-label="Reps"
+                    style={{ width: figureWidth(input.reps) }}
+                  />
+                  <span className={styles.figureUnit}>reps</span>
+                </div>
+
+                <div className={styles.steppers}>
+                  <div className={styles.stepperPair}>
                     <button
-                      className={`${styles.stepToggle} ${weightStep === 1 ? styles.stepActive1 : styles.stepActive125}`}
-                      onClick={() => setWeightStep((s) => (s === 1 ? 1.25 : 1))}
+                      className={styles.stepBtn}
+                      aria-label="Decrease weight"
+                      onClick={() => {
+                        const cur = parseFloat(input.weight) || 0;
+                        setInput((p) => ({
+                          ...p,
+                          weight: String(Math.max(0, +(cur - weightStep).toFixed(2))),
+                        }));
+                      }}
                     >
-                      {weightStep === 1 ? '1' : '1.25'}
+                      −
+                    </button>
+                    <button
+                      className={styles.stepBtn}
+                      aria-label="Increase weight"
+                      onClick={() => {
+                        const cur = parseFloat(input.weight) || 0;
+                        setInput((p) => ({ ...p, weight: String(+(cur + weightStep).toFixed(2)) }));
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className={styles.stepperDivider} />
+                  <div className={styles.stepperPair}>
+                    <button
+                      className={styles.stepBtn}
+                      aria-label="Decrease reps"
+                      onClick={() => {
+                        const cur = parseInt(input.reps) || 0;
+                        setInput((p) => ({ ...p, reps: String(Math.max(0, cur - 1)) }));
+                      }}
+                    >
+                      −
+                    </button>
+                    <button
+                      className={styles.stepBtn}
+                      aria-label="Increase reps"
+                      onClick={() => {
+                        const cur = parseInt(input.reps) || 0;
+                        setInput((p) => ({ ...p, reps: String(cur + 1) }));
+                      }}
+                    >
+                      +
                     </button>
                   </div>
                 </div>
-                <div className={styles.fieldGroup}>
-                  <label className={styles.fieldLabel}>Reps</label>
-                  <div className={styles.fieldRow}>
-                    <button className={styles.incBtn} onClick={() => {
-                      const cur = parseInt(input.reps) || 0;
-                      setInput((p) => ({ ...p, reps: String(Math.max(0, cur - 1)) }));
-                    }}>−</button>
-                    <NumberInput
-                      value={input.reps}
-                      onChange={(v) => setInput((p) => ({ ...p, reps: v }))}
-                      placeholder="0"
-                    />
-                    <button className={styles.incBtn} onClick={() => {
-                      const cur = parseInt(input.reps) || 0;
-                      setInput((p) => ({ ...p, reps: String(cur + 1) }));
-                    }}>+</button>
-                  </div>
+
+                <div className={styles.stepCaptions}>
+                  <button
+                    className={styles.stepToggle}
+                    onClick={() => setWeightStep((s) => (s === 1 ? 1.25 : 1))}
+                  >
+                    step {weightStep === 1 ? '1.0' : '1.25'} kg
+                  </button>
+                  <span className={styles.stepCaptionRight}>reps</span>
                 </div>
-                <RirSelector
-                  value={input.rir}
-                  onChange={(v) => setInput((p) => ({ ...p, rir: v }))}
-                />
+
+                <div className={styles.rir}>
+                  <RirSelector
+                    value={input.rir}
+                    onChange={(v) => setInput((p) => ({ ...p, rir: v }))}
+                  />
+                </div>
               </>
             ) : (
-              <div className={styles.inputRow}>
-                <NumberInput
-                  label="Incline"
-                  value={input.incline}
-                  onChange={(v) => setInput((p) => ({ ...p, incline: v }))}
-                  decimal
-                  placeholder="0"
-                />
-                <NumberInput
-                  label="Speed"
-                  value={input.speed}
-                  onChange={(v) => setInput((p) => ({ ...p, speed: v }))}
-                  decimal
-                  placeholder="0"
-                />
-                <NumberInput
-                  label="Min"
-                  value={input.durationMinutes}
-                  onChange={(v) => setInput((p) => ({ ...p, durationMinutes: v }))}
-                  placeholder="0"
-                />
-              </div>
+              <>
+                <div className={styles.figures}>
+                  <NumberInput
+                    display
+                    value={input.durationMinutes}
+                    onChange={(v) => setInput((p) => ({ ...p, durationMinutes: v }))}
+                    placeholder="0"
+                    aria-label="Duration in minutes"
+                    style={{ width: figureWidth(input.durationMinutes) }}
+                  />
+                  <span className={styles.figureUnit}>min</span>
+                </div>
+                <div className={styles.cardioFields}>
+                  <NumberInput
+                    label="Incline"
+                    value={input.incline}
+                    onChange={(v) => setInput((p) => ({ ...p, incline: v }))}
+                    decimal
+                    placeholder="0"
+                  />
+                  <NumberInput
+                    label="Speed"
+                    value={input.speed}
+                    onChange={(v) => setInput((p) => ({ ...p, speed: v }))}
+                    decimal
+                    placeholder="0"
+                  />
+                </div>
+              </>
             )}
-
-            <Button fullWidth onClick={saveSet} disabled={!canSave}>
-              Finished
-            </Button>
           </div>
         )}
 
-        {/* Pending sets — hidden while timer is running */}
-        {!allSetsDone && !timer.isActive &&
-          Array.from({ length: totalSetsForEx - exCompletedSets.length - 1 }, (_, i) => {
-            const futureSetNum = currentSetNum + 1 + i;
-            return (
-              <PendingSetRow
-                key={futureSetNum}
-                setNumber={futureSetNum}
-                prediction={getPendingHint(futureSetNum - 1)}
-                type={currentEx.type}
-              />
-            );
-          })}
+        <div className={styles.setsList}>
+          {exCompletedSets.map((set, i) => (
+            <CompletedSetRow key={`done-${i}`} setNumber={i + 1} set={set} type={currentEx.type} />
+          ))}
+          {!allSetsDone &&
+            Array.from({ length: totalSetsForEx - exCompletedSets.length - 1 }, (_, i) => {
+              const futureSetNum = currentSetNum + 1 + i;
+              return (
+                <PendingSetRow
+                  key={futureSetNum}
+                  setNumber={futureSetNum}
+                  prediction={getPendingHint(futureSetNum - 1)}
+                  type={currentEx.type}
+                />
+              );
+            })}
+        </div>
       </div>
 
-      {/* Next / Finish buttons */}
-      {allSetsDone && !timer.isActive && (
-        <div className={styles.nextArea}>
-          {isLastExercise ? (
-            <Button fullWidth onClick={finishWorkout}>
-              Finish Workout
-            </Button>
+      <div className="action-pad">
+        <div className="action-pad-inner">
+          {allSetsDone ? (
+            isLastExercise ? (
+              <Button fullWidth lead onClick={finishWorkout}>
+                <Check size={18} />
+                Finish workout
+              </Button>
+            ) : (
+              <Button fullWidth lead onClick={nextExercise}>
+                Next exercise
+              </Button>
+            )
           ) : (
-            <Button fullWidth onClick={nextExercise}>
-              Next Exercise
+            <Button fullWidth lead onClick={saveSet} disabled={!canSave}>
+              <Check size={18} />
+              Log set {currentSetNum} of {totalSetsForEx}
             </Button>
           )}
         </div>
-      )}
+      </div>
 
       {showAbandon && (
         <ConfirmDialog
-          title="Abandon Workout?"
-          message="Your progress for this session will be lost."
+          title="Abandon this workout?"
+          message="Your progress for this session will be discarded — nothing goes into your history."
           confirmLabel="Abandon"
+          cancelLabel="Keep training"
           danger
           onConfirm={handleAbandon}
           onCancel={() => setShowAbandon(false)}

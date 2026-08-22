@@ -1,257 +1,270 @@
-.workoutCard {
-  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 55%);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.8);
-}
+/* ─── Header / hero ─────────────────────────────────────────── */
 
-.workoutHead {
+.statStrip {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 4px;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
 }
 
-.workoutName {
-  font-size: 25px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+.statValue {
+  font-size: 23px;
+  font-weight: 500;
+}
+
+.statUnit {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.statLabel {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.statAccent {
+  color: var(--accent);
+}
+
+.statDivider {
+  width: 1px;
+  height: 26px;
+  background: var(--border);
+}
+
+.heroRule {
+  margin: 20px 0 4px;
+}
+
+/* ─── Exercise rows ─────────────────────────────────────────── */
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowMain {
+  flex: 1;
   min-width: 0;
 }
 
-.changeBtn {
-  flex-shrink: 0;
-  min-height: 32px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--border);
-}
-
-.changeBtn:active {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text-primary);
-}
-
-.workoutMeta {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 16px;
-}
-
-.switchPicker {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin: 14px 0 16px;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-.switchLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 2px;
-}
-
-.switchOption {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 46px;
-  padding: 0 12px;
-  text-align: left;
-  font-weight: 500;
-  color: var(--text-primary);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.switchOption:active {
-  background: var(--bg-tertiary);
-}
-
-.switchOptionCurrent {
-  border-color: rgba(34, 197, 94, 0.45);
-  background: rgba(34, 197, 94, 0.1);
-}
-
-.switchDay {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  flex-shrink: 0;
-  width: 40px;
-}
-
-.switchName {
-  flex: 1;
+.rowName {
+  display: block;
   font-size: 15px;
-  white-space: nowrap;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.switchBadge {
-  flex-shrink: 0;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.switchHint {
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.emptyActions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  max-width: 300px;
-}
-
-.resumeBanner {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.28);
-  border-radius: var(--radius-sm);
-  padding: 12px;
-  margin-bottom: 16px;
-}
-
-.resumeTitle {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.resumeMeta {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.exercisePreview {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.previewRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.previewNum {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  width: 18px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.previewName {
-  flex: 1;
-  font-size: 15px;
-  color: var(--text-primary);
-}
-
-.previewDetail {
-  font-size: 13px;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.lastSession {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  font-size: 13px;
+.rowMeta {
+  font-size: 11.5px;
   color: var(--text-muted);
 }
 
-.lastLabel {
+.rowFigure {
+  font-size: 19px;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  flex: none;
 }
 
-.lastDate {
-  color: var(--text-secondary);
+.rowUnit {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
-.lastDuration {
-  margin-left: auto;
-  color: var(--text-secondary);
+.rowTrailing {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 30px;
+  text-align: right;
+  flex: none;
 }
 
-.actions {
+.rowDelta {
+  font-size: 11.5px;
+  width: 34px;
+  text-align: right;
+  flex: none;
+  color: var(--text-muted);
+}
+
+.rowDeltaUp {
+  color: var(--accent);
+}
+
+/* ─── Notes ─────────────────────────────────────────────────── */
+
+.note {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.skipOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.doneCard {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 48px 24px;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 11.5px;
+  color: var(--text-muted);
 }
 
-.checkIcon {
-  margin-bottom: 16px;
+.noteIcon {
+  color: var(--accent);
+  flex: none;
 }
 
-.doneTitle {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
+.resumeNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-.doneMeta {
-  font-size: 14px;
+/* ─── Done ──────────────────────────────────────────────────── */
+
+.doneFlag {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 26px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tonnage {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.tonnageValue {
+  font-size: 76px;
+  font-weight: 500;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tonnageUnit {
+  font-size: 18px;
+  color: var(--text-muted);
+  padding-bottom: 9px;
+}
+
+.doneStats {
+  margin-top: 18px;
+}
+
+.doneRule {
+  margin: 22px 0 4px;
+}
+
+.nextUp {
+  margin-top: 20px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  margin-bottom: 8px;
 }
 
-.doneNext {
-  font-size: 15px;
-  color: var(--text-secondary);
+.nextUpMeta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 5px;
 }
 
-.doneNext strong {
+/* ─── Switch / skip sheets ──────────────────────────────────── */
+
+.sheetOption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 15px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
   color: var(--text-primary);
+  text-align: left;
+  width: 100%;
+  min-height: 0;
+}
+
+.sheetOption:last-child {
+  border-bottom: none;
+}
+
+.sheetOption:active {
+  background: rgba(233, 233, 237, 0.04);
+}
+
+.sheetDay {
+  width: 20px;
+  flex: none;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.sheetDayCurrent {
+  color: var(--accent);
+}
+
+.sheetName {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheetMeta {
+  flex: none;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.sheetBadge {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.sheetActions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-top: 4px;
+}
+
+/* ─── Action pad ────────────────────────────────────────────── */
+
+.iconAction {
+  width: 52px;
+  min-height: 52px;
+  flex: none;
+  padding: 0;
 }

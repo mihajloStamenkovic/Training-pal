@@ -5,16 +5,14 @@ interface ExerciseProgressProps {
   total: number;
 }
 
+/** The hairline strip at the top of a live workout: a rule, then "2 / 5". */
 export default function ExerciseProgress({ current, total }: ExerciseProgressProps) {
-  const pct = ((current + 1) / total) * 100;
   return (
     <div className={styles.container}>
-      <span className={styles.text}>
-        Exercise {current + 1} of {total}
+      <span className={styles.line} />
+      <span className={styles.count}>
+        {current + 1} / {total}
       </span>
-      <div className={styles.bar}>
-        <div className={styles.fill} style={{ width: `${pct}%` }} />
-      </div>
     </div>
   );
 }

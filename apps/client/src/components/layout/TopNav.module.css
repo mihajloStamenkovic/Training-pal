@@ -1,0 +1,25 @@
+.nav {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  transition: color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+}
+
+.tab:active {
+  transform: scale(0.94);
+}
+
+.tab.active {
+  color: var(--accent);
+  background: var(--accent-hover);
+}

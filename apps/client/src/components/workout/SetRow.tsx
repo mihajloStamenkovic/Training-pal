@@ -1,4 +1,6 @@
+import { Check, Minus } from '@phosphor-icons/react';
 import type { SessionSet, StrengthSet, CardioSet } from '../../db/types';
+import { summariseSet } from '../../utils/workoutStats';
 import styles from './SetRow.module.css';
 
 interface CompletedSetRowProps {
@@ -8,20 +10,14 @@ interface CompletedSetRowProps {
 }
 
 export function CompletedSetRow({ setNumber, set, type }: CompletedSetRowProps) {
-  const summary =
-    type === 'strength'
-      ? `${(set as StrengthSet).weight}kg × ${(set as StrengthSet).reps} @ RIR ${(set as StrengthSet).rir}`
-      : `Incline ${(set as CardioSet).incline} · Speed ${(set as CardioSet).speed} · ${(set as CardioSet).durationMinutes}min`;
-
   return (
-    <div className={styles.completed}>
-      <div className={styles.checkmark}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="3">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      </div>
+    <div className={styles.row}>
+      <Check size={14} className={styles.doneIcon} />
       <span className={styles.setNum}>Set {setNumber}</span>
-      <span className={styles.summary}>{summary}</span>
+      <span className={styles.summary}>{summariseSet(set, type)}</span>
+      {type === 'strength' && (
+        <span className={styles.trailing}>RIR {(set as StrengthSet).rir}</span>
+      )}
     </div>
   );
 }
@@ -35,19 +31,19 @@ interface PendingSetRowProps {
 export function PendingSetRow({ setNumber, prediction, type }: PendingSetRowProps) {
   let hint = '';
   if (prediction) {
-    if (type === 'strength') {
-      const p = prediction as StrengthSet;
-      hint = `${p.weight}kg × ${p.reps} @ RIR ${p.rir}`;
-    } else {
+    hint = summariseSet(prediction, type);
+    if (type === 'cardio') {
       const p = prediction as CardioSet;
-      hint = `Incline ${p.incline} · Speed ${p.speed} · ${p.durationMinutes}min`;
+      hint = `${p.durationMinutes}min`;
     }
   }
 
   return (
-    <div className={styles.pending}>
+    <div className={`${styles.row} ${styles.pending}`}>
+      <Minus size={14} className={styles.pendingIcon} />
       <span className={styles.setNum}>Set {setNumber}</span>
-      {hint && <span className={styles.hint}>{hint}</span>}
+      <span className={styles.summary}>{hint}</span>
+      <span className={styles.trailing}>planned</span>
     </div>
   );
 }

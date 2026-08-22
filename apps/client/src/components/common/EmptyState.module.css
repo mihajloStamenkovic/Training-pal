@@ -1,34 +1,63 @@
+/* Left-aligned and unboxed — there are no cards in Nocturne. */
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 44px 20px;
-  text-align: center;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  align-items: flex-start;
+  padding: 36px 0;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  max-width: 280px;
 }
 
 .description {
+  margin-top: 14px;
+  max-width: 290px;
   font-size: 14px;
-  color: var(--text-muted);
-  max-width: 280px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.accentRule {
+  height: 1px;
+  width: 120px;
+  margin: 26px 0;
+  background: linear-gradient(to right, var(--accent), transparent);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  list-style: none;
+  font-size: 13px;
   line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.step {
+  display: flex;
+  gap: 11px;
+}
+
+.stepNum {
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  width: 14px;
+  flex: none;
+  padding-top: 3px;
 }
 
 .action {
-  margin-top: 22px;
+  margin-top: 28px;
   width: 100%;
-  max-width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  gap: 10px;
 }

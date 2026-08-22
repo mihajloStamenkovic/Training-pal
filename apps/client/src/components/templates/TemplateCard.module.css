@@ -1,23 +1,15 @@
-.card {
+/* No card — a hairline row. */
+.row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--hairline);
   cursor: pointer;
-  transition: background 0.15s;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  margin-left: 12px;
-}
-
-.card:active {
-  background: var(--bg-tertiary);
+.row:last-child {
+  border-bottom: none;
 }
 
 .info {
@@ -26,37 +18,43 @@
 }
 
 .name {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 4px;
+  display: block;
+  font-size: 15.5px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.nameQuiet {
+  color: rgba(233, 233, 237, 0.8);
+}
+
 .meta {
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 11.5px;
+  color: var(--text-muted);
 }
 
 .actionBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  min-height: 36px;
-  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  flex: none;
+  border-radius: var(--radius);
   background: transparent;
-  color: var(--text-muted);
-  flex-shrink: 0;
+  border: none;
+  color: rgba(233, 233, 237, 0.4);
 }
 
 .actionBtn:active {
-  background: var(--bg-tertiary);
+  color: var(--accent);
+  background: rgba(145, 132, 217, 0.1);
 }
 
 .deleteBtn:active {
-  background: var(--bg-tertiary);
   color: var(--accent-danger);
+  background: rgba(217, 132, 132, 0.1);
 }

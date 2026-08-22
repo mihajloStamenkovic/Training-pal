@@ -1,11 +1,14 @@
+import { CaretDown, CaretUp, Copy, Plus, X } from '@phosphor-icons/react';
 import type { Exercise, StrengthExercise, StrengthSetTarget } from '../../db/types';
-import NumberInput from '../common/NumberInput';
+import { formatNumber, formatRest } from '../../utils/workoutStats';
 import styles from './ExerciseFormRow.module.css';
 
 interface ExerciseFormRowProps {
   exercise: Exercise;
   index: number;
   total: number;
+  expanded: boolean;
+  onToggle: () => void;
   onChange: (updated: Exercise) => void;
   onDuplicate: () => void;
   onRemove: () => void;
@@ -15,10 +18,24 @@ interface ExerciseFormRowProps {
 
 const defaultSet: StrengthSetTarget = { weight: 0, reps: 0, rir: 2 };
 
+/** The one-line version of an exercise: "3 × 26kg" or "12 min". */
+function summarise(exercise: Exercise): string {
+  if (exercise.type === 'strength') {
+    const heaviest = exercise.sets.reduce(
+      (best, set) => (set.weight > best.weight ? set : best),
+      exercise.sets[0] ?? defaultSet,
+    );
+    return `${exercise.sets.length} × ${formatNumber(heaviest.weight)}kg`;
+  }
+  return `${exercise.durationMinutes} min`;
+}
+
 export default function ExerciseFormRow({
   exercise,
   index,
   total,
+  expanded,
+  onToggle,
   onChange,
   onDuplicate,
   onRemove,
@@ -26,13 +43,15 @@ export default function ExerciseFormRow({
   onMoveDown,
 }: ExerciseFormRowProps) {
   const isStrength = exercise.type === 'strength';
+  const number = String(index + 1).padStart(2, '0');
 
   function update(patch: Record<string, unknown>) {
     onChange({ ...exercise, ...patch } as Exercise);
   }
 
-  function toggleType() {
-    if (isStrength) {
+  function setType(next: 'strength' | 'cardio') {
+    if (next === exercise.type) return;
+    if (next === 'cardio') {
       onChange({
         id: exercise.id,
         type: 'cardio',
@@ -48,7 +67,7 @@ export default function ExerciseFormRow({
         type: 'strength',
         name: exercise.name,
         sets: [{ ...defaultSet }],
-        restSeconds: exercise.restSeconds,
+        restSeconds: exercise.restSeconds || 180,
       });
     }
   }
@@ -56,9 +75,7 @@ export default function ExerciseFormRow({
   // Strength set helpers
   function updateSet(setIndex: number, patch: Partial<StrengthSetTarget>) {
     if (exercise.type !== 'strength') return;
-    const newSets = exercise.sets.map((s, i) =>
-      i === setIndex ? { ...s, ...patch } : s
-    );
+    const newSets = exercise.sets.map((s, i) => (i === setIndex ? { ...s, ...patch } : s));
     update({ sets: newSets });
   }
 
@@ -74,51 +91,23 @@ export default function ExerciseFormRow({
     update({ sets: newSets.length > 0 ? newSets : [{ ...defaultSet }] });
   }
 
+  if (!expanded) {
+    return (
+      <button className={styles.summaryRow} onClick={onToggle}>
+        <span className={styles.summaryNum}>{number}</span>
+        <span className={styles.summaryName}>{exercise.name || 'Untitled exercise'}</span>
+        <span className={styles.summaryMeta}>{summarise(exercise)}</span>
+        <CaretDown size={14} className={styles.summaryCaret} />
+      </button>
+    );
+  }
+
   return (
     <div className={styles.row}>
-      <div className={styles.header}>
-        <span className={styles.number}>{index + 1}</span>
-        <div className={styles.reorder}>
-          <button
-            className={styles.moveBtn}
-            onClick={onDuplicate}
-            aria-label="Duplicate exercise"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <rect x="9" y="9" width="11" height="11" rx="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
-          </button>
-          <button
-            className={styles.moveBtn}
-            onClick={onMoveUp}
-            disabled={index === 0}
-            aria-label="Move up"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="18 15 12 9 6 15" />
-            </svg>
-          </button>
-          <button
-            className={styles.moveBtn}
-            onClick={onMoveDown}
-            disabled={index === total - 1}
-            aria-label="Move down"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-        </div>
-        <button className={styles.removeBtn} onClick={onRemove} aria-label="Remove exercise">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
+      <div className={styles.head}>
+        <button className={styles.number} onClick={onToggle} aria-label="Collapse exercise">
+          {number}
         </button>
-      </div>
-
-      <div className={styles.nameRow}>
         <input
           type="text"
           placeholder="Exercise name"
@@ -126,96 +115,161 @@ export default function ExerciseFormRow({
           onChange={(e) => update({ name: e.target.value })}
           className={styles.nameInput}
         />
-        <button
-          className={`${styles.typeToggle} ${isStrength ? styles.strength : styles.cardio}`}
-          onClick={toggleType}
-        >
-          {isStrength ? 'Strength' : 'Cardio'}
-        </button>
+        <div className={styles.headActions}>
+          <button className={styles.iconBtn} onClick={onDuplicate} aria-label="Duplicate exercise">
+            <Copy size={15} />
+          </button>
+          <button
+            className={styles.iconBtn}
+            onClick={onMoveUp}
+            disabled={index === 0}
+            aria-label="Move up"
+          >
+            <CaretUp size={15} />
+          </button>
+          <button
+            className={styles.iconBtn}
+            onClick={onMoveDown}
+            disabled={index === total - 1}
+            aria-label="Move down"
+          >
+            <CaretDown size={15} />
+          </button>
+          <button
+            className={`${styles.iconBtn} ${styles.removeBtn}`}
+            onClick={onRemove}
+            aria-label="Remove exercise"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.typeRow}>
+        <div className={styles.segmented}>
+          <button
+            className={`${styles.segment} ${isStrength ? styles.segmentOn : ''}`}
+            onClick={() => setType('strength')}
+          >
+            Strength
+          </button>
+          <button
+            className={`${styles.segment} ${!isStrength ? styles.segmentOn : ''}`}
+            onClick={() => setType('cardio')}
+          >
+            Cardio
+          </button>
+        </div>
+        <span className={styles.spacer} />
+        {isStrength && (
+          <label className={styles.restField}>
+            <span className={styles.restLabel}>rest</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              className={styles.restInput}
+              value={exercise.restSeconds}
+              onChange={(e) =>
+                update({ restSeconds: Math.max(0, parseInt(e.target.value.replace(/\D/g, '')) || 0) })
+              }
+              aria-label="Rest between sets, in seconds"
+            />
+            <span className={styles.restHint}>{formatRest(exercise.restSeconds)}</span>
+          </label>
+        )}
       </div>
 
       {isStrength ? (
-        <>
-          <div className={styles.restRow}>
-            <NumberInput
-              label="Rest between sets (seconds)"
-              value={exercise.restSeconds}
-              onChange={(v) => update({ restSeconds: Math.max(0, parseInt(v) || 0) })}
-              min={0}
-            />
+        <div className={styles.sets}>
+          <div className={styles.setsHead}>
+            <span className={styles.colSet}>set</span>
+            <span className={styles.colWeight}>kg</span>
+            <span className={styles.colReps}>reps</span>
+            <span className={styles.colRir}>rir</span>
+            <span className={styles.colRemove} />
           </div>
-
-          <div className={styles.setsSection}>
-            <div className={styles.setsHeader}>
-              <span className={styles.setsLabel}>Sets</span>
-            </div>
-            {(exercise as StrengthExercise).sets.map((set, si) => (
-              <div key={si} className={styles.setRow}>
-                <span className={styles.setNum}>{si + 1}</span>
-                <NumberInput
-                  label="kg"
-                  value={set.weight || ''}
-                  onChange={(v) => updateSet(si, { weight: parseFloat(v) || 0 })}
-                  decimal
-                  placeholder="0"
-                />
-                <NumberInput
-                  label="Reps"
-                  value={set.reps || ''}
-                  onChange={(v) => updateSet(si, { reps: parseInt(v) || 0 })}
-                  placeholder="0"
-                />
-                <div className={styles.rirField}>
-                  <label className={styles.rirLabel}>RIR</label>
-                  <div className={styles.rirBtns}>
-                    {[0, 1, 2].map((n) => (
-                      <button
-                        key={n}
-                        type="button"
-                        className={`${styles.rirBtn} ${set.rir === n ? styles.rirActive : ''}`}
-                        onClick={() => updateSet(si, { rir: n })}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <button
-                  className={styles.removeSetBtn}
-                  onClick={() => removeSet(si)}
-                  aria-label="Remove set"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
+          {(exercise as StrengthExercise).sets.map((set, si) => (
+            <div key={si} className={styles.setRow}>
+              <span className={styles.colSet}>{si + 1}</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                className={`${styles.colWeight} ${styles.cellInput}`}
+                value={set.weight || ''}
+                placeholder="0"
+                onChange={(e) =>
+                  updateSet(si, { weight: parseFloat(e.target.value.replace(',', '.')) || 0 })
+                }
+                aria-label={`Set ${si + 1} weight`}
+              />
+              <input
+                type="text"
+                inputMode="numeric"
+                className={`${styles.colReps} ${styles.cellInput}`}
+                value={set.reps || ''}
+                placeholder="0"
+                onChange={(e) => updateSet(si, { reps: parseInt(e.target.value) || 0 })}
+                aria-label={`Set ${si + 1} reps`}
+              />
+              <div className={styles.colRir}>
+                {[0, 1, 2].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={`${styles.rirChip} ${set.rir === n ? styles.rirOn : ''}`}
+                    onClick={() => updateSet(si, { rir: n })}
+                    aria-label={`Set ${si + 1}, RIR ${n}`}
+                    aria-pressed={set.rir === n}
+                  >
+                    {n}
+                  </button>
+                ))}
               </div>
-            ))}
-            <button className={styles.addSetBtn} onClick={addSet}>
-              + Add Set
-            </button>
-          </div>
-        </>
+              <button
+                className={`${styles.iconBtn} ${styles.removeBtn} ${styles.colRemove}`}
+                onClick={() => removeSet(si)}
+                aria-label={`Remove set ${si + 1}`}
+              >
+                <X size={13} />
+              </button>
+            </div>
+          ))}
+          <button className={styles.addSetBtn} onClick={addSet}>
+            <Plus size={14} />
+            Add set
+          </button>
+        </div>
       ) : (
-        <div className={styles.fields}>
-          <NumberInput
-            label="Incline"
-            value={exercise.incline}
-            onChange={(v) => update({ incline: parseFloat(v) || 0 })}
-            decimal
-          />
-          <NumberInput
-            label="Speed"
-            value={exercise.speed}
-            onChange={(v) => update({ speed: parseFloat(v) || 0 })}
-            decimal
-          />
-          <NumberInput
-            label="Duration (min)"
-            value={exercise.durationMinutes}
-            onChange={(v) => update({ durationMinutes: parseInt(v) || 0 })}
-          />
+        <div className={styles.cardioFields}>
+          <label className={styles.cardioField}>
+            <span className={styles.cardioLabel}>incline</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={exercise.incline}
+              onChange={(e) =>
+                update({ incline: parseFloat(e.target.value.replace(',', '.')) || 0 })
+              }
+            />
+          </label>
+          <label className={styles.cardioField}>
+            <span className={styles.cardioLabel}>speed</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={exercise.speed}
+              onChange={(e) => update({ speed: parseFloat(e.target.value.replace(',', '.')) || 0 })}
+            />
+          </label>
+          <label className={styles.cardioField}>
+            <span className={styles.cardioLabel}>minutes</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={exercise.durationMinutes}
+              onChange={(e) => update({ durationMinutes: parseInt(e.target.value) || 0 })}
+            />
+          </label>
         </div>
       )}
     </div>

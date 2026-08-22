@@ -1,25 +1,22 @@
 .container {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
-.text {
-  font-size: 13px;
+.line {
+  flex: 1;
+  height: 1px;
+  background: rgba(233, 233, 237, 0.14);
+}
+
+.count {
+  flex: none;
+  font-size: 11px;
   font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.bar {
-  height: 4px;
-  background: var(--bg-tertiary);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
