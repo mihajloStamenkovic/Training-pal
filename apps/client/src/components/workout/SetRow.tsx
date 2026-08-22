@@ -1,5 +1,5 @@
 import { Check, Minus } from '@phosphor-icons/react';
-import type { SessionSet, StrengthSet, CardioSet } from '../../db/types';
+import type { SessionSet, StrengthSet, CardioSet } from '@training-pal/shared';
 import { summariseSet } from '../../utils/workoutStats';
 import styles from './SetRow.module.css';
 

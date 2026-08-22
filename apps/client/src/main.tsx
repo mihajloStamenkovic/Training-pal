@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import './styles/theme.css';
 import App from './App';
 import QueryProvider from './lib/QueryProvider';
+import ToastProvider from './components/common/ToastProvider';
 import AuthTokenBridge from './lib/AuthTokenBridge';
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -16,7 +17,9 @@ createRoot(document.getElementById('root')!).render(
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
       <AuthTokenBridge />
       <QueryProvider>
-        <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </QueryProvider>
     </ClerkProvider>
   </StrictMode>,

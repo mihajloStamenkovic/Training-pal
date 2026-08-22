@@ -1,6 +1,20 @@
 import { SignIn } from '@clerk/clerk-react';
 import styles from './SignInScreen.module.css';
 
+/**
+ * Mirrors theme.css. Clerk derives shades from `variables` colours, so those
+ * have to be real values rather than var() references — keeping them named
+ * here at least means one place to change when the theme moves.
+ */
+const palette = {
+  accent: '#9184d9',
+  ground: '#161826',
+  text: '#e9e9ed',
+  textSecondary: 'rgba(233,233,237,.55)',
+  divider: 'rgba(233,233,237,.14)',
+  dividerText: 'rgba(233,233,237,.4)',
+} as const;
+
 export default function SignInScreen() {
   return (
     <div className={styles.page}>
@@ -26,12 +40,12 @@ export default function SignInScreen() {
               routing="hash"
               appearance={{
                 variables: {
-                  colorPrimary: '#9184d9',
-                  colorBackground: '#161826',
+                  colorPrimary: palette.accent,
+                  colorBackground: palette.ground,
                   colorInputBackground: 'transparent',
-                  colorInputText: '#e9e9ed',
-                  colorText: '#e9e9ed',
-                  colorTextSecondary: 'rgba(233,233,237,.55)',
+                  colorInputText: palette.text,
+                  colorText: palette.text,
+                  colorTextSecondary: palette.textSecondary,
                   borderRadius: '8px',
                   fontFamily: "'Inter', system-ui, sans-serif",
                 },
@@ -51,13 +65,13 @@ export default function SignInScreen() {
                     fontSize: '10px',
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(233,233,237,.45)',
+                    color: 'var(--text-muted)',
                     fontWeight: '500',
                   },
                   formFieldInput: {
                     background: 'transparent',
                     border: 'none',
-                    borderBottom: '1px solid rgba(233,233,237,.16)',
+                    borderBottom: '1px solid var(--border)',
                     borderRadius: '0',
                     padding: '0 0 9px',
                     fontSize: '16px',
@@ -65,8 +79,8 @@ export default function SignInScreen() {
                   },
                   formButtonPrimary: {
                     background: 'transparent',
-                    border: '1px solid #9184d9',
-                    color: '#9184d9',
+                    border: '1px solid var(--accent)',
+                    color: 'var(--accent)',
                     boxShadow: 'none',
                     minHeight: '56px',
                     fontSize: '16px',
@@ -75,22 +89,22 @@ export default function SignInScreen() {
                   },
                   socialButtonsBlockButton: {
                     background: 'transparent',
-                    border: '1px solid rgba(233,233,237,.16)',
-                    color: '#e9e9ed',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
                     minHeight: '52px',
                     fontSize: '14.5px',
                     fontWeight: '500',
                   },
-                  dividerLine: { background: 'rgba(233,233,237,.14)' },
+                  dividerLine: { background: palette.divider },
                   dividerText: {
                     fontSize: '10px',
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(233,233,237,.4)',
+                    color: palette.dividerText,
                   },
                   footer: { background: 'transparent' },
-                  footerActionText: { fontSize: '12.5px', color: 'rgba(233,233,237,.45)' },
-                  footerActionLink: { color: '#9184d9', fontWeight: '500' },
+                  footerActionText: { fontSize: '12.5px', color: 'var(--text-muted)' },
+                  footerActionLink: { color: 'var(--accent)', fontWeight: '500' },
                 },
               }}
             />

@@ -3,7 +3,6 @@
      One ground, no second surface. Hierarchy comes from size and
      space; the accent is a line and a glow, never a flood. */
   --bg-primary: #161826;
-  --bg-secondary: #161826;
   --bg-tertiary: #1b1d2c;
   --text-primary: #e9e9ed;
   --text-secondary: rgba(233, 233, 237, 0.55);
@@ -29,8 +28,6 @@
   --safe-right: env(safe-area-inset-right, 0px);
 
   --radius: 8px;
-  --radius-sm: 8px;
-  --radius-lg: 8px;
   --sheet-radius: 20px 20px 34px 34px;
   --content-max: 560px;
 
@@ -101,7 +98,7 @@ button {
   font-size: 16px;
   cursor: pointer;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   font-weight: 500;
   min-height: 44px;
   touch-action: manipulation;

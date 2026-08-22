@@ -4,7 +4,7 @@ import type {
   SessionExercise,
   SessionSet,
   StrengthSet,
-} from '../db/types';
+} from '@training-pal/shared';
 
 /** Rough work time per set, used only for the "est." figure on Today. */
 const SECONDS_PER_SET = 45;

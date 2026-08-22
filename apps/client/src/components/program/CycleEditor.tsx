@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CaretDown, CaretUp, Plus, X } from '@phosphor-icons/react';
 import { trpc } from '../../lib/trpc';
+import { useToast } from '../../hooks/useToast';
 import { todayString } from '../../utils/dates';
-import type { ProgramCycle, Template } from '../../db/types';
+import type { ProgramCycle, Template } from '@training-pal/shared';
 import BottomSheet from '../common/BottomSheet';
 import styles from './CycleEditor.module.css';
 
@@ -15,16 +16,17 @@ interface CycleEditorProps {
 export default function CycleEditor({ templates, cycle }: CycleEditorProps) {
   const navigate = useNavigate();
   const utils = trpc.useUtils();
+  const { showError } = useToast();
   const [showPicker, setShowPicker] = useState(false);
   const [showResetPicker, setShowResetPicker] = useState(false);
 
   const upsertCycle = trpc.cycle.upsert.useMutation({
     onSuccess: () => utils.cycle.get.invalidate(),
-    onError: () => alert('Failed to update cycle. Please try again.'),
+    onError: () => showError('Failed to update cycle. Please try again.'),
   });
   const updateCycle = trpc.cycle.update.useMutation({
     onSuccess: () => utils.cycle.get.invalidate(),
-    onError: () => alert('Failed to update cycle. Please try again.'),
+    onError: () => showError('Failed to update cycle. Please try again.'),
   });
 
   const templateMap = new Map(templates.map((t) => [t.id, t]));

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Copy, Trash } from '@phosphor-icons/react';
-import type { Template } from '../../db/types';
+import type { Template } from '@training-pal/shared';
 import styles from './TemplateCard.module.css';
 
 interface TemplateCardProps {

@@ -1,5 +1,5 @@
 import { trpcClient } from '../lib/trpc';
-import type { SessionExercise } from '../db/types';
+import type { SessionExercise } from '@training-pal/shared';
 
 export async function getLastSessionExercises(
   templateId: string

@@ -44,7 +44,7 @@ export default function RestTimerDisplay({
               cy="119"
               r={RADIUS}
               fill="none"
-              stroke="rgba(233,233,237,0.1)"
+              stroke="var(--hairline)"
               strokeWidth="2"
             />
             <circle

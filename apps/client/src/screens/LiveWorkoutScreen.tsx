@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, X } from '@phosphor-icons/react';
 import { trpc, trpcClient } from '../lib/trpc';
+import { useToast } from '../hooks/useToast';
 import { todayString } from '../utils/dates';
 import { getLastSessionExercises } from '../utils/predictions';
 import { formatNumber } from '../utils/workoutStats';
-import { exerciseConfigKey, exerciseNameKey } from '../db/types';
+import { exerciseConfigKey, exerciseNameKey } from '@training-pal/shared';
 import { useRestTimer } from '../hooks/useRestTimer';
 import { useStopwatch, formatStopwatch } from '../hooks/useStopwatch';
 import {
@@ -23,7 +24,7 @@ import type {
   SessionSet,
   StrengthSet,
   CardioSet,
-} from '../db/types';
+} from '@training-pal/shared';
 import ExerciseProgress from '../components/workout/ExerciseProgress';
 import { CompletedSetRow, PendingSetRow } from '../components/workout/SetRow';
 import RirSelector from '../components/workout/RirSelector';
@@ -67,18 +68,19 @@ export default function LiveWorkoutScreen() {
   const manualTemplateId = searchParams.get('templateId');
   const isManualLog = Boolean(manualDate && manualTemplateId);
   const utils = trpc.useUtils();
+  const { showError } = useToast();
   const { data: cycle } = trpc.cycle.get.useQuery();
   const createSession = trpc.sessions.create.useMutation({
-    onError: () => alert('Failed to save workout. Please try again.'),
+    onError: () => showError('Failed to save workout. Please try again.'),
   });
   const updateCycleMutation = trpc.cycle.update.useMutation({
-    onError: () => alert('Failed to update your program cycle. Please try again.'),
+    onError: () => showError('Failed to update your program cycle. Please try again.'),
   });
   const updateTemplateMutation = trpc.templates.update.useMutation({
-    onError: () => alert('Failed to update template targets. Please try again.'),
+    onError: () => showError('Failed to update template targets. Please try again.'),
   });
   const syncExercisesMutation = trpc.templates.syncExercises.useMutation({
-    onError: () => alert('Failed to carry these numbers over to your other workouts.'),
+    onError: () => showError('Failed to carry these numbers over to your other workouts.'),
   });
 
   const [exercises, setExercises] = useState<Exercise[]>([]);

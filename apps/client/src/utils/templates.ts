@@ -1,4 +1,4 @@
-import type { Exercise } from '../db/types';
+import type { Exercise } from '@training-pal/shared';
 import { generateId } from './uuid';
 
 export function cloneExercise(exercise: Exercise): Exercise {

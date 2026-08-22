@@ -1,4 +1,4 @@
-import type { Exercise, SessionExercise, SessionSet } from '../db/types';
+import type { Exercise, SessionExercise, SessionSet } from '@training-pal/shared';
 import { toDateString } from './dates';
 
 const STORAGE_KEY = 'training-pal:workout-draft';

@@ -1,4 +1,4 @@
-import type { Exercise, Session, SessionExercise } from '../db/types';
+import type { Exercise, Session, SessionExercise } from '@training-pal/shared';
 
 export function isHandledSession(session: Session): boolean {
   return session.status === 'completed' || session.status === 'skipped';

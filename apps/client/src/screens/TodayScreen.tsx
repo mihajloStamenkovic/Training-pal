@@ -10,6 +10,7 @@ import {
   Plus,
 } from '@phosphor-icons/react';
 import { trpc } from '../lib/trpc';
+import { useToast } from '../hooks/useToast';
 import { addDays, compareDateStrings, todayString, formatDate, formatDuration } from '../utils/dates';
 import { clearWorkoutDraft, getWorkoutDraftDate, loadWorkoutDraft } from '../utils/workoutDraft';
 import { buildSessionExerciseSnapshot, isHandledSession } from '../utils/sessions';
@@ -22,7 +23,7 @@ import {
   rowFigure,
   sessionStats,
 } from '../utils/workoutStats';
-import type { Session, StrengthSet } from '../db/types';
+import type { Session, StrengthSet } from '@training-pal/shared';
 import Button from '../components/common/Button';
 import EmptyState from '../components/common/EmptyState';
 import BottomSheet from '../components/common/BottomSheet';
@@ -35,6 +36,7 @@ import styles from './TodayScreen.module.css';
 export default function TodayScreen() {
   const navigate = useNavigate();
   const utils = trpc.useUtils();
+  const { showError } = useToast();
   const [isSyncingMissedDays, setIsSyncingMissedDays] = useState(false);
   const [showSkipOptions, setShowSkipOptions] = useState(false);
   const [showSwitchPicker, setShowSwitchPicker] = useState(false);
@@ -60,10 +62,10 @@ export default function TodayScreen() {
 
   const createManySessions = trpc.sessions.createMany.useMutation();
   const createSession = trpc.sessions.create.useMutation({
-    onError: () => alert('Failed to log workout. Please try again.'),
+    onError: () => showError('Failed to log workout. Please try again.'),
   });
   const updateCycle = trpc.cycle.update.useMutation({
-    onError: () => alert('Failed to update your program cycle. Please try again.'),
+    onError: () => showError('Failed to update your program cycle. Please try again.'),
   });
 
   const todaySessions = allSessions?.filter((s) => s.date === todayString());

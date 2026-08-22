@@ -1,3 +1,4 @@
+import { useDismissOnEscape } from '../../hooks/useDismissOnEscape';
 import styles from './ConfirmDialog.module.css';
 import Button from './Button';
 
@@ -20,9 +21,17 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  useDismissOnEscape(onCancel);
+
   return (
     <div className={styles.overlay} onClick={onCancel}>
-      <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.message}>{message}</p>
         <div className={styles.actions}>

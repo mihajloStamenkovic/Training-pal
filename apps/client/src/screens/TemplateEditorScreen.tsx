@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CaretLeft, Plus } from '@phosphor-icons/react';
 import { trpc } from '../lib/trpc';
+import { useToast } from '../hooks/useToast';
 import { generateId } from '../utils/uuid';
 import { cloneExercise, cloneExercises, copyTemplateName } from '../utils/templates';
-import { exerciseConfigKey, exerciseNameKey } from '../db/types';
-import type { Exercise, StrengthExercise } from '../db/types';
+import { exerciseConfigKey, exerciseNameKey } from '@training-pal/shared';
+import type { Exercise, StrengthExercise } from '@training-pal/shared';
 import ExerciseFormRow from '../components/templates/ExerciseFormRow';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -28,23 +29,24 @@ export default function TemplateEditorScreen() {
   const isNew = !id;
 
   const utils = trpc.useUtils();
+  const { showError } = useToast();
   const { data: existing, isPending, isError, refetch } = trpc.templates.get.useQuery(
     { id: id! },
     { enabled: !!id },
   );
   const createTemplate = trpc.templates.create.useMutation({
     onSuccess: () => utils.templates.list.invalidate(),
-    onError: () => alert('Failed to create template. Please try again.'),
+    onError: () => showError('Failed to create template. Please try again.'),
   });
   const updateTemplate = trpc.templates.update.useMutation({
     onSuccess: () => {
       utils.templates.list.invalidate();
       utils.templates.get.invalidate({ id: id! });
     },
-    onError: () => alert('Failed to save template. Please try again.'),
+    onError: () => showError('Failed to save template. Please try again.'),
   });
   const syncExercises = trpc.templates.syncExercises.useMutation({
-    onError: () => alert('Failed to sync these exercises to your other templates.'),
+    onError: () => showError('Failed to sync these exercises to your other templates.'),
   });
 
   const [name, setName] = useState('');

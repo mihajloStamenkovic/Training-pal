@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from '@phosphor-icons/react';
 import { trpc } from '../lib/trpc';
+import { useToast } from '../hooks/useToast';
 import { cloneExercises, copyTemplateName } from '../utils/templates';
 import CycleEditor from '../components/program/CycleEditor';
 import TemplateCard from '../components/templates/TemplateCard';
@@ -16,6 +17,7 @@ import styles from './ProgramScreen.module.css';
 export default function ProgramScreen() {
   const navigate = useNavigate();
   const utils = trpc.useUtils();
+  const { showError } = useToast();
   const {
     data: templates,
     isPending: templatesLoading,
@@ -35,11 +37,11 @@ export default function ProgramScreen() {
       utils.templates.list.invalidate();
       utils.cycle.get.invalidate();
     },
-    onError: () => alert('Failed to delete template. Please try again.'),
+    onError: () => showError('Failed to delete template. Please try again.'),
   });
   const createTemplate = trpc.templates.create.useMutation({
     onSuccess: () => utils.templates.list.invalidate(),
-    onError: () => alert('Failed to duplicate template. Please try again.'),
+    onError: () => showError('Failed to duplicate template. Please try again.'),
   });
 
   async function handleDelete() {

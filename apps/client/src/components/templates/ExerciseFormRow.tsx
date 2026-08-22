@@ -1,5 +1,10 @@
 import { CaretDown, CaretUp, Copy, Plus, X } from '@phosphor-icons/react';
-import type { Exercise, StrengthExercise, StrengthSetTarget } from '../../db/types';
+import type {
+  CardioExercise,
+  Exercise,
+  StrengthExercise,
+  StrengthSetTarget,
+} from '@training-pal/shared';
 import { formatClock, formatNumber, heaviest } from '../../utils/workoutStats';
 import styles from './ExerciseFormRow.module.css';
 
@@ -42,8 +47,20 @@ export default function ExerciseFormRow({
   const isStrength = exercise.type === 'strength';
   const number = String(index + 1).padStart(2, '0');
 
-  function update(patch: Record<string, unknown>) {
-    onChange({ ...exercise, ...patch } as Exercise);
+  // Patches are typed per variant, so a cardio field can no longer be spread
+  // onto a strength exercise (or vice versa) without the compiler noticing.
+  function updateStrength(patch: Partial<Omit<StrengthExercise, 'id' | 'type'>>) {
+    if (exercise.type !== 'strength') return;
+    onChange({ ...exercise, ...patch });
+  }
+
+  function updateCardio(patch: Partial<Omit<CardioExercise, 'id' | 'type'>>) {
+    if (exercise.type !== 'cardio') return;
+    onChange({ ...exercise, ...patch });
+  }
+
+  function updateName(name: string) {
+    onChange({ ...exercise, name });
   }
 
   function setType(next: 'strength' | 'cardio') {
@@ -73,19 +90,19 @@ export default function ExerciseFormRow({
   function updateSet(setIndex: number, patch: Partial<StrengthSetTarget>) {
     if (exercise.type !== 'strength') return;
     const newSets = exercise.sets.map((s, i) => (i === setIndex ? { ...s, ...patch } : s));
-    update({ sets: newSets });
+    updateStrength({ sets: newSets });
   }
 
   function addSet() {
     if (exercise.type !== 'strength') return;
     const lastSet = exercise.sets[exercise.sets.length - 1] ?? defaultSet;
-    update({ sets: [...exercise.sets, { ...lastSet }] });
+    updateStrength({ sets: [...exercise.sets, { ...lastSet }] });
   }
 
   function removeSet(setIndex: number) {
     if (exercise.type !== 'strength') return;
     const newSets = exercise.sets.filter((_, i) => i !== setIndex);
-    update({ sets: newSets.length > 0 ? newSets : [{ ...defaultSet }] });
+    updateStrength({ sets: newSets.length > 0 ? newSets : [{ ...defaultSet }] });
   }
 
   if (!expanded) {
@@ -109,7 +126,7 @@ export default function ExerciseFormRow({
           type="text"
           placeholder="Exercise name"
           value={exercise.name}
-          onChange={(e) => update({ name: e.target.value })}
+          onChange={(e) => updateName(e.target.value)}
           className={styles.nameInput}
         />
         <div className={styles.headActions}>
@@ -167,7 +184,9 @@ export default function ExerciseFormRow({
               className={styles.restInput}
               value={exercise.restSeconds}
               onChange={(e) =>
-                update({ restSeconds: Math.max(0, parseInt(e.target.value.replace(/\D/g, '')) || 0) })
+                updateStrength({
+                  restSeconds: Math.max(0, parseInt(e.target.value.replace(/\D/g, '')) || 0),
+                })
               }
               aria-label="Rest between sets, in seconds"
             />
@@ -176,7 +195,7 @@ export default function ExerciseFormRow({
         )}
       </div>
 
-      {isStrength ? (
+      {exercise.type === 'strength' ? (
         <div className={styles.sets}>
           <div className={styles.setsHead}>
             <span className={styles.colSet}>set</span>
@@ -185,7 +204,7 @@ export default function ExerciseFormRow({
             <span className={styles.colRir}>rir</span>
             <span className={styles.colRemove} />
           </div>
-          {(exercise as StrengthExercise).sets.map((set, si) => (
+          {exercise.sets.map((set, si) => (
             <div key={si} className={styles.setRow}>
               <span className={styles.colSet}>{si + 1}</span>
               <input
@@ -245,7 +264,7 @@ export default function ExerciseFormRow({
               inputMode="decimal"
               value={exercise.incline}
               onChange={(e) =>
-                update({ incline: parseFloat(e.target.value.replace(',', '.')) || 0 })
+                updateCardio({ incline: parseFloat(e.target.value.replace(',', '.')) || 0 })
               }
             />
           </label>
@@ -255,7 +274,7 @@ export default function ExerciseFormRow({
               type="text"
               inputMode="decimal"
               value={exercise.speed}
-              onChange={(e) => update({ speed: parseFloat(e.target.value.replace(',', '.')) || 0 })}
+              onChange={(e) => updateCardio({ speed: parseFloat(e.target.value.replace(',', '.')) || 0 })}
             />
           </label>
           <label className={styles.cardioField}>
@@ -264,7 +283,7 @@ export default function ExerciseFormRow({
               type="text"
               inputMode="numeric"
               value={exercise.durationMinutes}
-              onChange={(e) => update({ durationMinutes: parseInt(e.target.value) || 0 })}
+              onChange={(e) => updateCardio({ durationMinutes: parseInt(e.target.value) || 0 })}
             />
           </label>
         </div>
